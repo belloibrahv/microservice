@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Boxes, LayoutDashboard, LogOut, ShieldCheck, ShoppingCart } from "lucide-react";
+import { useState } from "react";
+import { Boxes, LayoutDashboard, LogOut, Menu, ShieldCheck, ShoppingCart, X } from "lucide-react";
 
 import type { CartItem } from "@/lib/types";
 import { useAppStore } from "@/stores/use-app-store";
@@ -19,6 +20,7 @@ const navItems = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, cart, signOut } = useAppStore();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(67,182,255,0.18),_transparent_35%),linear-gradient(180deg,_#070b15_0%,_#09111c_42%,_#f4efe7_42%,_#f4efe7_100%)] text-slate-100">
@@ -32,7 +34,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <p className="text-sm font-semibold tracking-[0.22em] text-sky-200 uppercase">
                 Tasued FYP
               </p>
-              <p className="text-sm text-slate-300">
+              <p className="text-xs text-slate-300 hidden sm:block">
                 Scalable Microservices Retail Platform
               </p>
             </div>
@@ -66,31 +68,104 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <span>{cart.reduce((count: number, item: CartItem) => count + item.quantity, 0)}</span>
             </Link>
 
+            <div className="hidden lg:flex items-center gap-3">
+              {user ? (
+                <>
+                  <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-100">
+                    {user.fullName}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={signOut}
+                    className="flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-slate-100 transition hover:bg-white/10"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/sign-in"
+                    className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-100 transition hover:bg-white/10"
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    href="/auth/sign-up"
+                    className="rounded-full bg-sky-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-sky-200"
+                  >
+                    Sign up
+                  </Link>
+                </>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="rounded-full border border-white/10 p-2 text-slate-300 hover:bg-white/5 hover:text-white lg:hidden"
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {menuOpen && (
+        <div className="border-b border-white/10 bg-slate-950/95 px-6 py-4 backdrop-blur-xl lg:hidden">
+          <nav className="flex flex-col gap-2">
+            {navItems.map((item) => {
+              const active = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`rounded-xl px-4 py-3 text-sm font-semibold transition ${
+                    active
+                      ? "bg-white/10 text-white"
+                      : "text-slate-300 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+          
+          <div className="mt-4 border-t border-white/10 pt-4">
             {user ? (
-              <div className="flex items-center gap-3">
-                <div className="hidden rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-100 md:block">
+              <div className="flex flex-col gap-3">
+                <div className="rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100 text-center font-semibold">
                   {user.fullName}
                 </div>
                 <button
                   type="button"
-                  onClick={signOut}
-                  className="flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-slate-100 transition hover:bg-white/10"
+                  onClick={() => {
+                    signOut();
+                    setMenuOpen(false);
+                  }}
+                  className="flex items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10"
                 >
                   <LogOut className="h-4 w-4" />
                   Sign out
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col gap-3">
                 <Link
                   href="/auth/sign-in"
-                  className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-100 transition hover:bg-white/10"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center justify-center rounded-xl border border-white/10 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10"
                 >
                   Sign in
                 </Link>
                 <Link
                   href="/auth/sign-up"
-                  className="rounded-full bg-sky-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-sky-200"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center justify-center rounded-xl bg-sky-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-sky-200"
                 >
                   Sign up
                 </Link>
@@ -98,7 +173,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             )}
           </div>
         </div>
-      </header>
+      )}
 
       <main>{children}</main>
 

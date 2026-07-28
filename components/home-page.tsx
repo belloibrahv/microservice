@@ -152,7 +152,7 @@ export function HomePage() {
             </p>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3">
             {serviceCards.map((card) => (
               <div key={card.name} className="light-card rounded-[2rem] p-6">
                 <card.icon className="h-8 w-8 text-sky-700" />
@@ -207,7 +207,7 @@ export function HomePage() {
             </h2>
           </div>
 
-          <div className="mt-12 grid gap-6 xl:grid-cols-4">
+          <div className="mt-12 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {[supervisor, ...researchers].map((member) => (
               <div key={member.name} className="section-card rounded-[2rem] p-5">
                 <div className="relative h-72 overflow-hidden rounded-[1.5rem]">
