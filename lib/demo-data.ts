@@ -18,30 +18,21 @@ export const researchers: TeamMember[] = [
     role: "Student Researcher",
     matricNumber: "20220294019",
     specialty: "Architecture design, frontend storytelling, and cloud workflow mapping",
-    imageUrl: buildImageUrl(
-      "professional portrait of a Nigerian male computer science final year student, smart casual academic style, modern research lab setting, realistic photography, detailed skin tones, calm confident expression",
-      "portrait_4_3"
-    ),
+    imageUrl: "/clement.png",
   },
   {
     name: "Olusegun Afolabi Oluwapelumi",
     role: "Student Researcher",
     matricNumber: "20220294010",
     specialty: "API design, microservice coordination, and deployment planning",
-    imageUrl: buildImageUrl(
-      "professional portrait of a Nigerian male software engineering student, clean academic look, cloud computing environment, realistic photography, premium lighting, focused expression",
-      "portrait_4_3"
-    ),
+    imageUrl: "/olusegun.png",
   },
   {
     name: "Moyosore Gawat Awe",
     role: "Student Researcher",
     matricNumber: "20220294016",
     specialty: "Observability, product research translation, and service experience design",
-    imageUrl: buildImageUrl(
-      "professional portrait of a Nigerian student researcher in computer science, elegant smart outfit, technology studio background, realistic photography, cinematic soft light, approachable expression",
-      "portrait_4_3"
-    ),
+    imageUrl: "/moyo.png",
   },
 ];
 
