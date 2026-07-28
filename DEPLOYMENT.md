@@ -13,7 +13,7 @@ This document provides instructions for deploying the Microservices Retail Platf
 ### 1. Prepare the Repository
 
 Ensure your repository contains:
-- The complete `apps/web` directory
+- The complete codebase at the root level (including `app`, `public`, etc.)
 - `render.yaml` configuration file
 - `package.json` with correct dependencies
 

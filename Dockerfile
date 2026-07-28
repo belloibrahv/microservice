@@ -11,15 +11,15 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Copy dependency definition files
-COPY apps/web/package.json apps/web/pnpm-lock.yaml apps/web/pnpm-workspace.yaml* ./apps/web/
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 
-# Install dependencies inside the workspace
-RUN cd apps/web && pnpm install --frozen-lockfile
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
 # Stage 3: Build the application
 FROM base AS builder
 WORKDIR /app
-COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Set env variables for production build
@@ -27,7 +27,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
 # Run Next.js build
-RUN cd apps/web && pnpm build
+RUN pnpm build
 
 # Stage 4: Production runner
 FROM base AS runner
@@ -44,9 +44,9 @@ RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
 # Copy built standalone bundle, static assets, and public assets
-COPY --from=builder /app/apps/web/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
