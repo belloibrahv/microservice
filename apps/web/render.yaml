@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: microservices-retail-platform
+    env: node
+    buildCommand: pnpm install && pnpm build
+    startCommand: pnpm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+    plan: free

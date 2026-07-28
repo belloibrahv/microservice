@@ -1,0 +1,1213 @@
+
+TAI SOLARIN FEDERAL UNIVERSITY OF EDUCATION
+(TASFUED)
+IJEBU-ODE, OGUN STATE, NIGERIA
+
+DEPARTMENT OF COMPUTER AND INFORMATION SCIENCE
+COLLEGE OF SCIENCE AND INFORMATION TECHNOLOGY
+
+DESIGN AND IMPLEMENTATION OF A SCALABLE MICROSERVICES
+ARCHITECTURE FOR CLOUD-BASED APPLICATIONS
+BY
+
+S/N
+STUDENT NAME
+MATRIC NUMBER
+1
+AYANGBENRO CLEMENT-GOODNESS JESUTUNMISE
+20220294019
+2
+OLUSEGUN AFOLABI OLUWAPELUMI
+20220294010
+3
+MOYOSORE GAWAT AWE
+20220294016
+
+BEING A PROJECT SUBMITTED TO THE DEPARTMENT OF COMPUTER SCIENCE, FACULTY OF SCIENCE, TAI SOLARIN FEDERAL UNIVERSITY OF EDUCATION, IJAGUN, IJEBU-ODE, OGUN STATE, IN PARTIAL FULFILLMENT OF THE REQUIREMENTS FOR THE AWARD OF THE DEGREE OF BACHELOR OF SCIENCE (B.Sc.) IN COMPUTER SCIENCE
+SUPERVISOR:
+Dr. A. A. Owoade
+
+2025/2026
+
+CHAPTER ONE
+INTRODUCTION
+1.1 Background to the Study
+Software applications have, over the last two decades, moved away from being installed and run on individual computers to being delivered as services that are accessed over the internet. This shift has been driven largely by the growth of cloud computing, which allows organisations to rent computing power, storage, and networking resources from third-party providers instead of building and maintaining their own data centres. According to Gartner (2024), worldwide end-user spending on public cloud services was forecast to reach 723.4 billion dollars in 2025, representing a growth of 21.5 percent over the 595.7 billion dollars recorded in 2024, a trend attributed to the increasing reliance of businesses on distributed, hybrid, and cloud-native environments to support their operations. This steady rise in cloud adoption reflects a broader recognition among organisations that cloud infrastructure offers a level of scalability, flexibility, and cost efficiency that traditional on-premises infrastructure struggles to match.
+Alongside the growth of cloud computing, there has been a corresponding shift in the way applications are architected internally. For many years, the dominant approach to building enterprise applications was the monolithic architecture, in which all the functional components of a system, such as the user interface, business logic, and data access layer, are combined into a single, tightly coupled unit that is developed, tested, and deployed as one artefact. While this approach is simple to build in its early stages, it becomes increasingly difficult to manage as the application grows in size and complexity. A single fault in one part of a monolithic system can bring down the entire application, and scaling such a system often means duplicating the whole application rather than scaling only the specific component under heavy demand.
+Microservices architecture emerged as a response to these limitations. Fowler and Lewis (2014) describe the microservices approach as one in which a single application is developed as a suite of small, independently deployable services, each running in its own process and communicating through lightweight mechanisms, typically HTTP-based application programming interfaces (APIs). Each microservice is built around a specific business capability, can be developed using a technology stack best suited to its function, and can be deployed, scaled, and updated independently of other services in the system. This architectural style aligns naturally with cloud computing, since cloud platforms provide the elastic infrastructure, container orchestration tools, and automated deployment pipelines that microservices depend on to function effectively at scale.
+The adoption of microservices in the software industry has grown considerably in recent years. A global survey conducted by O'Reilly Media (2020), which sampled 1,502 software engineers, technical architects, and decision-makers, found that 77 percent of respondent organisations had adopted microservices in some form, and 92 percent of those who adopted the approach reported at least some measure of success with it. The same survey found that organisations which used containers to deploy their microservices were more likely to report successful outcomes than those that did not, with 62 percent of respondents using containers to deploy at least some of their services. A related O'Reilly (2021) cloud adoption survey further reported that 90 percent of organisations were using cloud computing in one form or another, with Amazon Web Services, Microsoft Azure, and Google Cloud identified as the most widely used providers.
+Real-world examples from the technology industry illustrate the practical benefits of this architectural shift. Netflix, one of the most widely cited case studies in this regard, began migrating from a monolithic architecture hosted in its own data centres to a microservices architecture on Amazon Web Services following a database corruption incident in August 2008 that left the company unable to ship DVDs to customers for three days (ByteByteGo, 2025). The migration, which was substantially completed by 2016, allowed Netflix to scale individual components of its system independently, isolate failures to single services rather than the entire platform, and support the continuous delivery of new features to a rapidly growing global subscriber base. Similar transitions have been documented at Amazon, which restructured its internal systems into independently owned services in the early 2000s, and at Uber, which moved from a monolithic codebase to a service-oriented architecture as its operations expanded into hundreds of cities (Newman, 2021).
+The infrastructure layer that supports microservices has matured considerably alongside the architectural style itself. Containerisation, in particular through the use of Docker and Kubernetes, has become the dominant mechanism by which organisations package, deploy, and orchestrate the many independently running services that make up a microservices system. The Cloud Native Computing Foundation (2024) reported in its Annual Survey that cloud-native adoption had reached eighty-nine percent among respondents, and that ninety-three percent of organisations were actively using, piloting, or evaluating Kubernetes for container orchestration, representing an increase from sixty-six percent recorded in the previous year's survey. The same report placed Kubernetes production usage at eighty percent, up from sixty-six percent in 2023, an annual growth rate of over twenty percent. This level of adoption indicates that container orchestration has become a standard expectation for teams building distributed, cloud-native systems, including the kind of microservices architecture this project sets out to design and implement.
+The relevance of microservices and cloud-native development extends to the Nigerian technology landscape. According to Mordor Intelligence (2025), the Nigerian cloud computing market was valued at 1.03 billion United States dollars in 2025 and is projected to reach 3.28 billion dollars by 2030, growing at a compound annual growth rate of approximately 25.98 percent. A study commissioned by Amazon Web Services, as reported by Nairametrics (2023), found that broader cloud computing adoption in Nigeria could generate an additional economic value of 30.2 trillion naira by 2033. As Nigerian technology companies and public institutions increasingly invest in scalable, internet-facing platforms, familiarity with the design and deployment of cloud-native microservices architectures becomes correspondingly more important for software engineers and developers trained in Nigerian institutions.
+In spite of these documented benefits, designing and implementing a microservices architecture is not a trivial undertaking. It introduces its own set of engineering concerns, including how services discover and communicate with one another, how requests from client applications are routed to the correct service, how data consistency is maintained across services that no longer share a single database, and how the resulting distributed system is monitored, secured, and deployed in a repeatable manner. It is against this background that this project sets out to design and implement a scalable microservices architecture for a cloud-based application, with the aim of demonstrating, in a practical and technically grounded manner, how these architectural concerns can be addressed using currently available tools and cloud infrastructure.
+1.2 Statement of the Problem
+Many software applications, particularly those developed by students, small teams, and early-stage organisations, are still built using the monolithic architectural pattern because it is comparatively easier to design, develop, and reason about during the early stages of a project. However, as the number of users and the complexity of features grow, monolithic applications tend to exhibit several recurring problems. A single change to one part of the codebase often requires the entire application to be rebuilt and redeployed, which slows down the release of new features. A fault or failure in one module, such as a memory leak in a reporting component, can degrade or crash the entire application rather than being isolated to the affected function. In addition, scaling a monolithic application to handle increased traffic usually means replicating the whole application, including components that are not under heavy load, which leads to inefficient use of computing resources and unnecessary cost.
+Microservices architecture addresses many of these problems by decomposing an application into smaller, independently deployable services. However, the transition to this architectural style is not without its own difficulties. Developers who are new to distributed systems often struggle with concerns such as service discovery, inter-service communication, fault tolerance, and the coordination of deployments across multiple independent services running on cloud infrastructure. There is also comparatively limited practical, hands-on documentation, particularly within Nigerian tertiary institutions, that walks through the complete process of designing, containerising, deploying, and testing a microservices-based system on a cloud platform from first principles. This gap makes it difficult for students and early-career developers to move from a theoretical understanding of microservices to a working, scalable implementation.
+This project therefore addresses the problem of how a cloud-based application can be architected using independently deployable microservices in a manner that improves scalability, fault isolation, and deployment flexibility when compared with an equivalent monolithic implementation, while remaining achievable within the resource and time constraints typically available to a final year project.
+A further dimension of the problem relates to observability and operational management. In a monolithic system, diagnosing a failure typically involves examining a single log file or a single application process. In a microservices system, a single user request may traverse five or more services before a response is returned, and a failure at any point in that chain can be difficult to trace without dedicated tooling. Tools such as distributed tracing systems, centralised log aggregation, and metrics dashboards are necessary components of any production microservices environment, yet their configuration and integration is rarely covered in standard undergraduate curricula. This project addresses that gap by incorporating observability considerations into the design and implementation of the proposed system.
+1.3 Aim and Objectives of the Study
+The aim of this study is to design and implement a scalable microservices architecture for a cloud-based application, demonstrating how independent services can be developed, containerised, deployed, and coordinated to achieve improved scalability and fault tolerance over a traditional monolithic design.
+The specific objectives of the study are to:
+i. review existing literature and industry practice on monolithic and microservices architectures, in order to identify the design principles that guide effective microservices development;
+ii. design the system architecture of a cloud-based application, including the decomposition of the application into distinct microservices, the definition of service boundaries, and the design of the communication and data flow between services;
+iii. implement the designed microservices using appropriate programming languages, frameworks, and containerisation tools;
+iv. incorporate supporting components necessary for a functional microservices ecosystem, including an API gateway, service discovery, and load balancing;
+v. deploy the resulting system on a cloud computing platform; and
+vi. evaluate the performance, scalability, and fault tolerance of the implemented architecture through structured testing.
+1.4 Significance of the Study
+This study is significant to several groups. To students and researchers in computer science and related disciplines, it provides a practical, well-documented reference on how a microservices architecture can be designed and implemented from the ground up, using tools and platforms that are freely or affordably accessible, thereby bridging the gap between the theoretical treatment of microservices found in most course materials and its actual implementation.
+To software developers and small technology teams, particularly those operating in resource-constrained environments, the study offers a working illustration of how monolithic applications can be reasoned about and re-architected into smaller, independently scalable components without requiring the scale of infrastructure typically associated with large technology companies.
+To the Department of Computer Science and the wider academic community at Tai Solarin Federal University of Education, the study contributes to the body of documented final year projects on modern software architecture and cloud computing, and may serve as a reference point for subsequent students undertaking related research in distributed systems, cloud-native development, or software scalability.
+The broader national context also reinforces the significance of this work. As noted by Mordor Intelligence (2025), the Nigerian cloud computing market is among the fastest-growing on the continent, with a projected compound annual growth rate of approximately twenty-six percent through 2030. As more Nigerian organisations adopt cloud infrastructure and expect the software platforms built for them to be scalable and resilient, the demand for engineers who understand how to design and deploy cloud-native systems will increase. A practical, academically documented reference on microservices implementation, produced within a Nigerian institution, therefore contributes not only to the body of academic knowledge but also to the pipeline of technically equipped graduates entering this growing market.
+1.5 Scope of the Study
+This study is limited to the design and implementation of a prototype cloud-based application built using a microservices architecture. The prototype application is decomposed into a small number of representative microservices, each responsible for a distinct business capability, communicating with one another through RESTful application programming interfaces. The study covers the design of the service architecture, the containerisation of individual services using Docker, the implementation of an API gateway and a service discovery mechanism, and the deployment of the resulting system on a cloud computing platform. The performance of the implemented system is evaluated using measures such as response time, service availability during simulated failure of an individual component, and the ability of the system to handle an increase in simulated request load.
+The study does not extend to the design of a full, production-grade, commercially deployed platform, and does not cover every possible microservices pattern, cloud provider, or orchestration tool available in industry. It is restricted to a representative subset of tools and patterns sufficient to demonstrate the core principles of scalable microservices design within the context of a final year project.
+1.6 Limitations of the Study
+The implementation of this study was constrained by a number of factors. First, the project was carried out within the limited time frame available for a final year undergraduate project, which restricted the number of microservices and features that could be reasonably designed, implemented, and tested. Second, cloud infrastructure was accessed largely through free-tier and student-tier offerings from cloud providers, which impose limits on compute resources, storage, and the duration for which services can run continuously, and this constrained the scale at which load testing could be performed. Third, as with most academic software projects, the implemented system is a prototype intended to demonstrate architectural principles rather than a fully hardened, production-ready platform, and certain enterprise-grade concerns, such as advanced security auditing and regulatory compliance, fall outside the scope of what could be addressed within the available time and resources.
+1.7 Definition of Terms
+For clarity, the following terms are used throughout this project as defined below:
+Microservices Architecture: an architectural style in which an application is structured as a collection of small, independently deployable services, each built around a specific business capability and communicating over lightweight protocols such as HTTP (Fowler & Lewis, 2014).
+Monolithic Architecture: a software design approach in which all the components of an application, including the user interface, business logic, and data access layer, are combined into a single, tightly coupled unit that is deployed as one artefact.
+Cloud Computing: the on-demand delivery of computing resources, such as servers, storage, and applications, over the internet, typically on a pay-as-you-go basis, without the need for the user to own or manage the underlying physical infrastructure.
+Scalability: the capability of a system to handle an increasing amount of work, or its potential to accommodate growth, by adding resources to the system.
+Containerisation: a lightweight form of virtualisation in which an application and its dependencies are packaged together into a single, portable unit called a container, which can run consistently across different computing environments.
+Docker: a widely used software platform for building, packaging, and running applications in containers.
+Kubernetes: an open-source container orchestration platform, originally developed by Google, that automates the deployment, scaling, and management of containerised applications across clusters of machines.
+Container Orchestration: the automated management of the deployment, scaling, networking, and lifecycle of containers across a cluster of machines, typically performed by platforms such as Kubernetes (CNCF, 2024).
+API Gateway: a server that acts as a single entry point for client requests in a microservices system, routing each request to the appropriate backend service.
+Service Discovery: a mechanism by which services in a distributed system locate and communicate with one another dynamically, without requiring their network locations to be hard-coded.
+Load Balancing: the process of distributing incoming network traffic or requests across multiple servers or service instances, in order to prevent any single instance from becoming overwhelmed.
+Fault Tolerance: the ability of a system to continue operating, possibly at a reduced level of performance, when one or more of its components fail.
+Circuit Breaker: a design pattern used in distributed systems to detect repeated failures in a downstream service and temporarily halt requests to it, preventing a failing service from cascading its failure to the services that depend on it (Nygard, 2018).
+Observability: the degree to which the internal state of a system can be inferred from its external outputs, typically achieved through the collection and analysis of logs, metrics, and distributed traces.
+RESTful API: an application programming interface that follows the constraints of Representational State Transfer (REST), using standard HTTP methods to enable communication between software components over the web.
+1.8 Organisation of the Study
+This project report is organised into five chapters. Chapter One, the present chapter, introduces the study by presenting the background to the research, the statement of the problem, the aim and objectives, the significance and scope of the study, its limitations, and the definition of key terms used throughout the report.
+Chapter Two reviews existing literature on monolithic and microservices architectures, examines related design patterns and supporting technologies, such as containerisation, API gateways, service discovery, and load balancing, and situates the present study within the context of prior academic and industry work.
+Chapter Three describes the methodology and system design adopted for the study. It covers the analysis of the existing system, the requirements of the proposed system, the architectural design of the microservices, the tools and technologies selected for implementation, and the design of the databases and application programming interfaces used by each service.
+Chapter Four presents the implementation of the designed system. It documents how each microservice was built, containerised, and deployed, describes the configuration of the API gateway, service discovery, and load balancing components, and reports the results of the tests carried out to evaluate the performance, scalability, and fault tolerance of the completed system.
+Chapter Five concludes the study. It summarises the work undertaken, states the conclusions drawn from the design, implementation, and evaluation of the system, and offers recommendations for further work that could extend or improve upon the architecture developed in this project.
+1.9 Chapter Summary
+This chapter has introduced the study by tracing the evolution of software application architecture from monolithic designs toward microservices, within the broader context of rapid global cloud computing adoption and the growing relevance of cloud-native technologies to the Nigerian technology sector. It identified the specific problem the study addresses, namely the difficulty that students and early-stage development teams encounter when attempting to move from a theoretical understanding of microservices to a working, scalable, cloud-deployed implementation, and noted that this difficulty is compounded by challenges around observability and operational management that are rarely covered in standard undergraduate training. The chapter stated the aim and objectives that guide the project and the significance of the work to students, developers, and the broader academic community. It also set out the scope and limitations within which the project was carried out and provided definitions of the key technical terms used throughout the report. The next chapter reviews the literature relevant to this study in greater depth.
+
+CHAPTER TWO
+LITERATURE REVIEW
+2.1 Preamble
+This chapter reviews literature relevant to the design and implementation of a scalable microservices architecture for a cloud based application. The chapter is organised into three broad parts. The first part presents a conceptual review of the individual technologies and architectural patterns that together make up a microservices system, covering cloud computing, monolithic and microservices architecture, containerisation and orchestration, inter-service communication, data management, resilience, observability, service mesh, and continuous delivery. The second part presents the theoretical framework that underpins microservices design, drawing on service oriented architecture, Conway's Law, and the CAP theorem. The third part reviews related empirical and industry work, covering documented case studies from technology companies alongside academic studies that have examined the adoption, quality attributes, and challenges of microservices architecture. The chapter closes with a summary that draws together the reviewed literature and identifies the gap this project addresses.
+2.2 Conceptual Review
+2.2.1 Cloud Computing
+Cloud computing is most widely defined using the formulation put forward by the United States National Institute of Standards and Technology, which describes it as a model for enabling ubiquitous, convenient, on demand network access to a shared pool of configurable computing resources, such as networks, servers, storage, applications, and services, that can be rapidly provisioned and released with minimal management effort or service provider interaction (Mell & Grance, 2011). This definition identifies five essential characteristics of cloud computing, namely on demand self service, broad network access, resource pooling, rapid elasticity, and measured service. Three service models are commonly distinguished within cloud computing. Infrastructure as a Service provides virtualised computing resources, such as virtual machines, storage volumes, and networks, over the internet, giving the consumer control over operating systems and deployed applications while the provider manages the underlying physical hardware. Platform as a Service provides a managed runtime environment on which consumers can deploy applications directly, without needing to provision or patch the underlying servers or operating systems. Software as a Service delivers complete, ready to use applications to end users over the internet, with the provider managing every layer of the stack. Cloud computing is further categorised by deployment model into public cloud, where infrastructure is owned by a third party provider and shared among multiple tenants, private cloud, where infrastructure is dedicated to a single organisation, and hybrid cloud, which combines elements of both. The system designed in this project is intended for deployment primarily on public cloud infrastructure, drawing on both Infrastructure as a Service and Platform as a Service style offerings from a mainstream cloud provider.
+2.2.2 Monolithic Architecture
+A monolithic architecture is one in which all the functional components of an application, including the presentation layer, the business logic, and the data access layer, are combined into a single codebase that is built, tested, and deployed as one unit (Newman, 2021). Monoliths are often the natural starting point for a new application because a single codebase is comparatively easy to reason about, and a single deployable artefact simplifies early stage testing and release. As an application grows, however, the tight coupling between its internal modules becomes a liability. Newman (2021) observes that in a sufficiently large monolith, developers can lose track of the effects a change in one module will have elsewhere in the system, which slows down development and increases the risk associated with each release. Scaling a monolith typically means running additional copies of the entire application behind a load balancer, even when only one function within the application, such as a reporting module or a search feature, is actually under heavy load, which leads to inefficient use of computing resources. Some organisations adopt a modular monolith as an intermediate step, in which the codebase is still deployed as a single unit but is internally organised into well-defined modules with clear boundaries, in preparation for an eventual decomposition into separate services.
+2.2.3 Microservices Architecture
+Fowler and Lewis (2014) describe microservices architecture as an approach to developing a single application as a suite of small services, each running in its own process and communicating through lightweight mechanisms, typically an HTTP based application programming interface. Richardson (2018) similarly defines a microservices architecture as an architectural style that structures an application as a collection of loosely coupled, independently deployable services, each organised around a specific business capability. Fowler and Lewis (2014) identify a set of characteristics commonly observed in systems built this way, including componentisation through services rather than shared libraries, organisation around business capabilities rather than technical layers, decentralised governance and data management, infrastructure automation, and design for failure, in which each service is expected to handle the failure of the services it depends on rather than assuming a fully reliable environment. Because each microservice is independently deployable, teams can release changes to one service without needing to coordinate a release of the entire system, and because each service can, in principle, be implemented using the technology stack best suited to its function, organisations are not locked into a single language or framework across the whole application. These properties are also what make microservices architecture more demanding to operate than a monolith, since the benefits of independent deployability and decentralised data management come with the corresponding cost of managing many independently running processes, each with its own lifecycle, network address, and failure modes.
+2.2.4 Containerisation and Docker
+Containerisation is a form of operating system level virtualisation in which an application and all of its dependencies, such as libraries, configuration files, and runtime binaries, are packaged together into a single, portable unit called a container. Unlike a virtual machine, which virtualises an entire hardware stack and requires its own guest operating system, a container shares the kernel of the host operating system and isolates only the application process and its file system view, which makes containers considerably lighter than virtual machines in terms of start-up time and resource overhead. Felter, Ferreira, Rajamony, and Rubio (2015), in an empirical comparison of Docker containers against Kernel-based Virtual Machine hypervisor virtualisation conducted at IBM Research, found that Docker containers achieve performance that is equal to or better than virtual machines in almost every case tested, with the overhead of containerisation on central processing unit and memory performance being close to negligible, while virtual machines introduced measurably higher overhead, particularly for networking and storage input and output workloads. This near-native performance, combined with the portability that comes from packaging an application with its dependencies, is a major reason containers have become the standard unit of deployment for microservices. Docker in particular popularised a workflow built around a declarative Dockerfile, which specifies the steps needed to assemble a container image, a layered image format that allows image layers to be cached and reused across builds, and a registry model, through which built images can be stored, versioned, and pulled down onto any machine running a compatible container runtime.
+2.2.5 Container Orchestration and Kubernetes
+As the number of containers in a system grows, manually starting, stopping, and networking individual containers becomes impractical, which creates the need for container orchestration, defined as the automated management of the deployment, scaling, networking, and lifecycle of containers across a cluster of machines. Kubernetes, originally developed at Google and now maintained by the Cloud Native Computing Foundation, has become the dominant container orchestration platform. The Cloud Native Computing Foundation (2024) reported that Kubernetes reached an eighty percent production usage rate among respondents to its Annual Survey in 2024, up from sixty-six percent the previous year, confirming its position as the standard orchestration layer for cloud-native systems. Kubernetes organises workloads using a declarative model, in which an operator describes the desired state of the system, such as the number of running copies of a service, and a set of control loops running on the cluster's control plane continuously work to reconcile the actual state of the cluster with that desired state, restarting failed containers, rescheduling workloads away from failed nodes, and scaling the number of running copies of a service up or down in response to demand. Core Kubernetes objects relevant to a microservices deployment include the pod, which is the smallest deployable unit and typically wraps one application container, the deployment, which manages a set of identical pod replicas and handles rolling updates, the service, which provides a stable network identity and load balances traffic across the pods that back it, and the namespace, which provides a mechanism for logically partitioning a cluster among different applications or environments.
+2.2.6 The API Gateway Pattern
+In a microservices system, a client application, such as a mobile app or a web front end, would in principle need to know the network address of every individual service it depends on, which becomes unmanageable as the number of services grows and as those services are relocated, scaled, or replaced over time. The API gateway pattern addresses this by introducing a single entry point that sits between client applications and the backend services, and is responsible for routing each incoming request to the appropriate service (Richardson, 2018). Beyond routing, an API gateway commonly handles cross-cutting concerns that would otherwise need to be duplicated in every service, including authentication and authorisation, rate limiting, request and response transformation, and the aggregation of data from multiple backend services into a single response for the client, a variation sometimes referred to as the backend for frontend pattern when a dedicated gateway is built for a specific class of client. Centralising these concerns in a gateway simplifies the individual services, since each service can assume that traffic reaching it has already passed through authentication and basic validation, though it also introduces the gateway itself as a critical component whose availability and performance directly affect the whole system.
+2.2.7 Service Discovery
+Because instances of a microservice can be started, stopped, rescheduled, and scaled dynamically, their network locations are not fixed in the way that a single server's address would be in a monolithic deployment. Service discovery is the mechanism by which a service or client locates the current network address of another service it needs to call, without that address being hard-coded (Newman, 2021). Two broad approaches are described in the literature. In client-side discovery, a calling service queries a shared service registry directly and then selects one of the returned addresses itself, an approach historically associated with tools such as Netflix's Eureka. In server-side discovery, the calling service sends its request to a well-known intermediary, such as a load balancer or the platform's own networking layer, which looks up the current set of healthy instances and forwards the request accordingly. Kubernetes implements a version of server-side discovery natively, assigning every service a stable internal domain name system name that automatically resolves to one of the currently healthy pods backing that service, which removes the need for application code to interact with a separate service registry.
+2.2.8 Inter-Service Communication
+Microservices exchange data using either synchronous or asynchronous communication styles, and most non-trivial systems use a mixture of both. Synchronous communication, typically implemented using RESTful HTTP application programming interfaces or, increasingly, the Remote Procedure Call framework gRPC, involves a calling service sending a request and waiting for an immediate response before continuing. This style is straightforward to reason about but introduces temporal coupling, since the calling service is blocked, and therefore affected, for as long as the called service takes to respond, or fails to respond at all. Asynchronous communication, typically implemented through a message broker such as RabbitMQ or a distributed event streaming platform such as Apache Kafka, allows a service to publish an event or message without waiting for the receiving service to process it, which reduces coupling between services and improves resilience to temporary failures downstream, at the cost of additional complexity in reasoning about the order and eventual delivery of messages. Newman (2021) notes that the choice between these styles is rarely all or nothing within a single system, and those services that must return an immediate result to a user-facing client typically rely on synchronous calls, while background processes, notifications, and cross-service data replication are frequently handled asynchronously.
+2.2.9 Data Management in Microservices
+A defining characteristic of microservices architecture is that each service manages its own data store, a pattern generally referred to as database per service, rather than multiple services sharing a single, centralised database (Richardson, 2018). This isolation allows each service to choose the data storage technology best suited to its needs and prevents a schema change in one service from breaking another, but it introduces the problem of maintaining consistency across services without the benefit of a single database transaction spanning them all. Richardson (2018) describes the Saga pattern as one widely adopted solution to this problem, in which a business transaction that spans multiple services is implemented as a sequence of local transactions, each of which publishes an event that triggers the next step, with compensating transactions defined to undo the effects of prior steps if a later step fails. A related pattern, Command Query Responsibility Segregation, separates the models used to write data from the models used to read it, which is particularly useful in a microservices system where the data needed to answer a single read query may originate from several different services, each with its own database. Because data is distributed across many independently managed stores, most microservices systems accept eventual consistency for data that spans service boundaries, rather than the strong, immediate consistency that a single relational database would typically provide.
+2.2.10 Fault Tolerance and Resilience Patterns
+In a distributed system composed of many independently running services, the failure of any single service is a routine occurrence rather than an exceptional one, and Nygard (2018) argues that software intended to run in production must be explicitly designed to survive the failure of the services and infrastructure it depends on. The circuit breaker pattern, described by Fowler (2014) and by Nygard (2018), addresses the specific risk that a calling service will continue sending requests to a failing downstream service, exhausting its own resources while waiting on responses that never arrive. A circuit breaker wraps calls to a downstream service and tracks recent failures; once failures exceed a defined threshold, the circuit breaker opens and further calls fail immediately, without waiting on the downstream service, until a cooldown period elapses and a small number of trial requests are allowed through to test whether the downstream service has recovered. Related resilience patterns include the retry pattern, in which a failed call is automatically attempted again, typically with an increasing delay between attempts, the timeout pattern, which places an upper bound on how long a service will wait for a response before treating the call as failed, and the bulkhead pattern, which isolates the resources, such as thread pools or connection pools, used for calls to different downstream services, so that the exhaustion of resources calling one failing service does not also starve calls to unrelated, healthy services.
+2.2.11 Observability in Distributed Systems
+Observability is defined as the degree to which the internal state of a system can be inferred from the data it produces externally, and is typically achieved through the combination of logs, metrics, and distributed traces. In a monolithic application, diagnosing a fault often involves examining a single log file produced by a single process. In a microservices system, a single user request may pass through several services before a response is returned, and a fault at any point in that chain can be difficult to localise without dedicated tooling. Sigelman et al. (2010), describing the internal tracing infrastructure built at Google and known as Dapper, demonstrated that a distributed tracing system, which attaches a shared identifier to a request as it moves across service boundaries and records the timing of each step, allows engineers to reconstruct the full path and latency profile of an individual request across many services, and this general approach has since been standardised in open tools such as OpenTelemetry. Alongside distributed tracing, centralised log aggregation collects logs from every running service instance into a single searchable system, and metrics collection continuously records numerical measurements, such as request rate, error rate, and response latency, which are then visualised on dashboards and used to trigger alerts when a service's behaviour departs from its expected range.
+2.2.12 Service Mesh
+A service mesh is a dedicated infrastructure layer, typically implemented as a lightweight network proxy deployed alongside every service instance in what is called the sidecar pattern, that manages the network traffic passing between services on behalf of the application code. By intercepting all inter-service traffic, a service mesh, such as Istio or Linkerd, can transparently apply mutual Transport Layer Security encryption between services, enforce retry and timeout policies, and collect detailed telemetry on inter-service calls, without requiring any of that logic to be written into the individual services themselves. This separates what is often referred to as north-south traffic, meaning requests that enter the system from outside and are typically handled by an API gateway, from east-west traffic, meaning requests that pass between services inside the system, which a service mesh is specifically designed to manage. Adopting a full service mesh introduces additional operational complexity and is generally considered appropriate once a system has grown to include a substantial number of services, and it is treated in this project as a conceptually important pattern rather than a component that the prototype system built in this study is required to include in full.
+2.2.13 Continuous Integration and Continuous Deployment
+Because each microservice is intended to be built, tested, and deployed independently of the others, microservices architecture is closely associated with continuous integration and continuous deployment practices, in which every change committed to a service's codebase automatically triggers an automated build, a suite of automated tests, and, where the tests pass, an automated deployment of the new version. A typical pipeline builds a new container image for the changed service, pushes that image to a container registry, and then instructs the orchestration platform to roll out the new image, often using a deployment strategy such as a rolling update, in which old and new versions of a service run side by side while traffic is gradually shifted, or a canary release, in which the new version is initially exposed to only a small percentage of traffic so that any regression can be detected and reversed before it affects the majority of users. These deployment strategies are only practical because each microservice can be deployed independently, and they represent one of the most commonly cited operational benefits of the architecture over an equivalent monolithic system, where a comparable rolling deployment would need to account for the entire, larger application at once.
+2.3 Theoretical Framework
+2.3.1 Service-Oriented Architecture as a Precursor to Microservices
+Microservices architecture did not emerge in isolation but is widely presented in the literature as an evolution of Service-Oriented Architecture, an earlier architectural style that also emphasised structuring software as a set of reusable, loosely coupled services. Pahl and Jamshidi (2016), in a systematic mapping study of the microservices literature, note that microservices largely retain the service orientation principles of Service-Oriented Architecture while departing from its typical implementation, which relied heavily on a centralised Enterprise Service Bus to handle routing, transformation, and orchestration logic between services. Fowler and Lewis (2014) summarise this departure with the phrase smart endpoints and dumb pipes, meaning that in a microservices system the business logic and decision-making reside within the individual services themselves, while the communication infrastructure connecting them is kept as simple as possible, typically plain HTTP or a lightweight message broker, in contrast to the heavier, logic-bearing middleware associated with a traditional Enterprise Service Bus. Di Francesco, Malavolta, and Lago (2017), reviewing the state of academic research on microservices architecting, similarly observe that much of the practical guidance on decomposing a system into services and defining service boundaries builds directly on service oriented design principles that predate the term microservices itself, adapted to a context of independent deployability and decentralised data ownership.
+2.3.2 Conway's Law and Organisational Alignment
+Conway (1968) proposed what has since become known as Conway's Law, observing that organisations which design systems are constrained to produce designs that are copies of the communication structures of those organisations. In the context of microservices architecture, this principle is frequently invoked to explain why the boundaries drawn around individual services tend to align closely with the boundaries of the teams that own them, and why organisations that adopt microservices often restructure themselves into small, autonomous teams, each responsible for the full lifecycle of one or a small number of services, a structure associated in industry accounts with Amazon's internal engineering practices. Newman (2021) treats this alignment as a design consideration in its own right, arguing that service boundaries should be chosen with an awareness of the teams that will build and operate them, since a service boundary that cuts across team boundaries tends to reintroduce the very coordination overhead that decomposing the system was meant to reduce. This theoretical lens is directly relevant to the present project, since the definition of service boundaries in Chapter Three is guided partly by the aim of keeping each service's responsibilities small and cohesive enough to be reasoned about, built, and modified independently, mirroring the same logic that Conway's Law describes at organisational scale.
+2.3.3 The CAP Theorem and Distributed Data Consistency
+Brewer (2000) proposed what has come to be known as the CAP theorem, which states that a distributed data system can provide at most two of three properties at the same time during a network failure, namely consistency, meaning every read receives the most recent write, availability, meaning every request receives a non-error response, and partition tolerance, meaning the system continues to operate despite communication failures between its nodes. Since a microservices system distributes data across many independently managed databases connected only by an unreliable network, the CAP theorem provides the theoretical basis for the widespread acceptance, described earlier in the conceptual review, of eventual consistency for data that spans multiple services. Rather than pursuing strong consistency across service boundaries, which the CAP theorem indicates would come at the cost of availability during network partitions, most microservices systems, including the one designed in this project, favour availability and partition tolerance for cross-service data, accepting a short delay before all services converge on a consistent view of the data through patterns such as the Saga pattern described earlier.
+2.4 Review of Related Works
+2.4.1 Industry Case Studies
+Documented industry migrations provide some of the most detailed accounts of microservices architecture applied at scale. Netflix's migration from a monolithic architecture hosted in its own data centres to a microservices architecture running on Amazon Web Services, prompted by a database corruption incident in 2008 that halted its DVD shipping operation for three days, is among the most frequently cited examples in both industry and academic literature, and by the time the migration was substantially complete in 2016, Netflix was able to isolate failures to individual services and scale components of its system independently in response to a rapidly growing global subscriber base (ByteByteGo, 2025). Amazon's own internal restructuring into independently owned services in the early 2000s is often cited alongside its adoption of small, autonomous engineering teams, an organisational pattern consistent with the theoretical relationship between service boundaries and team structure described by Conway's Law in the preceding section. Uber's transition from a monolithic codebase to a service-oriented, and later microservices-based, architecture as its operations expanded into hundreds of cities is documented by Newman (2021) as a further example of an organisation adopting the architecture primarily to allow different parts of a rapidly growing system to be scaled, deployed, and owned independently. Taken together, these case studies consistently point to three motivating factors behind the adoption of microservices architecture at scale, namely the need to isolate failures within a large system, the need to scale individual components of a system independently of one another, and the need to allow many engineering teams to develop and release software concurrently without blocking on one another.
+2.4.2 Academic and Empirical Studies
+Academic interest in microservices architecture has grown substantially since the term was popularised by Fowler and Lewis in 2014, and a body of systematic literature reviews has since emerged to synthesise the resulting research. Söylemez, Tekinerdogan, and Tarhan (2022), in a systematic literature review that screened 3,842 papers and selected 85 as primary studies, identified nine broad categories of challenges reported in the microservices literature, further divided into 40 sub-categories, spanning concerns such as service decomposition, testing, deployment, monitoring, and security, and concluded that microservices architecture is a feasible and beneficial approach but that its documented challenges must be deliberately planned for rather than discovered during implementation. Gurung, Shrestha, and Chulyadyo (2025), focusing specifically on the scalability dimension of microservices architecture, reviewed 44 scholarly articles following the PRISMA reporting guidelines and found that the majority of existing research concentrates on autoscaling strategies, with a growing subset applying machine learning techniques to scaling decisions, while identifying accurate metrics collection and the balancing of performance, cost, and security as recurring open challenges. Berardi et al. (2022), reviewing the literature on microservices security specifically, note that the number of published studies on the topic grew rapidly after 2014 and that the fragmented, network exposed nature of a microservices system, with many independent services each presenting their own application programming interface, materially changes the security considerations relative to a monolithic application, favouring approaches grounded in zero trust principles rather than a single perimeter defence. Felter et al. (2015), whose findings on container performance were introduced in the conceptual review, provide empirical grounding for the widespread use of containers as the deployment unit for microservices, having demonstrated that the performance overhead of containerisation is negligible relative to running the same workload directly, in contrast to the more substantial overhead associated with full hypervisor-based virtual machines. Considered together, this body of academic work confirms that microservices architecture is both extensively studied and, according to the reviewed systematic literature reviews, still associated with a well documented set of recurring challenges around decomposition, data management, testing, security, and scalability, several of which this project's design and implementation, described in Chapters Three and Four, deliberately takes into account.
+2.5 Summary of Literature Review and Identified Gaps
+This chapter has reviewed the conceptual foundations of cloud computing, monolithic and microservices architecture, containerisation and orchestration, and the supporting patterns, such as the API gateway, service discovery, resilience patterns, and observability, that together make a microservices system operable in practice. It has presented service oriented architecture, Conway's Law, and the CAP theorem as the theoretical framework guiding the architectural decisions made later in this project, and it has reviewed both industry case studies and academic systematic literature reviews documenting the benefits and the well established challenges associated with microservices adoption. Across this literature, two observations stand out as directly relevant to the present study. First, the conceptual and theoretical foundations of microservices architecture are well established and are consistently supported across both industry accounts and peer reviewed systematic literature reviews, giving this project a solid and well tested body of design principles to draw upon. Second, as already noted in Chapter One, the detailed, hands-on documentation of how these principles are actually implemented, containerised, and deployed on a cloud platform remains comparatively scarce within Nigerian tertiary institutions, even though the underlying architectural literature reviewed in this chapter is international in scope and freely available. This project is positioned within that gap, drawing directly on the concepts, patterns, and theoretical framework reviewed in this chapter to guide the system design presented in Chapter Three and the implementation presented in Chapter Four.
+
+CHAPTER THREE
+RESEARCH METHODOLOGY AND SYSTEM ANALYSIS
+3.1 Preamble
+This chapter presents the methodology adopted for the design of the scalable microservices architecture proposed in this study, together with the analysis that informed that design. It begins by describing the system development methodology followed, before analysing a representative existing system and the problems associated with it, specifying the functional and non-functional requirements of the proposed system, presenting the proposed architecture and the rationale behind its decomposition into individual services, and describing the data, communication, and technology choices made in arriving at the design presented in Chapter Four. Since this study is concerned with the architectural design of a software system rather than with the collection and statistical analysis of data from human subjects, no questionnaire, interview, or other survey instrument was employed; the methodology instead follows established software engineering design practice, and the evidence base for the decisions made throughout this chapter is drawn from the conceptual and theoretical review presented in Chapter Two.
+3.2 System Development Methodology
+The design described in this study follows an object-oriented analysis and design approach, in which the system is modelled as a collection of interacting objects and services rather than as a single sequential process, an approach well suited to a microservices architecture given that each microservice is itself naturally expressed as a bounded, self-contained object of responsibility (Sommerville, 2016). Sommerville (2016) describes modern software design as an iterative activity in which requirements analysis, architectural design, and detailed design inform one another rather than proceeding in a strict, one-directional sequence, and this iterative posture was adopted throughout the present study, with the service boundaries proposed in section 3.7 revisited more than once as the data design and communication design in later sections exposed considerations that were not apparent at the requirements stage alone.
+Within this broader approach, the specific technique used to decompose the proposed system into individual microservices was Domain-Driven Design, an approach introduced by Evans (2003) that models software around the business domain it serves rather than around technical layers such as presentation, logic, and storage. Central to Domain-Driven Design is the concept of a bounded context, a defined boundary within which a particular business model and its associated terminology apply consistently, and Evans (2003) argues that aligning software boundaries with bounded contexts in this way produces systems whose internal structure mirrors the natural structure of the business problem, which in turn makes each resulting component easier to reason about, test, and change independently, precisely the property that a microservices architecture depends on. Each microservice proposed in section 3.7 of this chapter corresponds to one bounded context identified from the business domain of the case application described in section 3.3.
+3.3 Description of the Case Application
+To ground the architectural design in a concrete and realistic scenario, this study adopts a representative cloud-based application as its case application, namely an online retail order management platform, hereafter referred to as the Retail Order Management System. This class of application was chosen because it exhibits several distinct business capabilities, namely customer identity and account management, product catalogue management, order placement and tracking, payment processing, and customer notification, that map naturally onto separate microservices, while remaining a widely understood domain that does not require specialised subject knowledge to follow. The Retail Order Management System is used throughout this chapter and the next purely as an illustrative vehicle for demonstrating the architectural principles established in Chapter Two, and the design decisions reached in relation to it are intended to generalise to other cloud-based applications that share a similar structure of distinct, loosely related business capabilities.
+3.4 Analysis of the Existing System
+A conventional implementation of the Retail Order Management System, consistent with the monolithic architecture described in section 2.2.2, would combine customer account management, product catalogue browsing, order processing, payment handling, and notification dispatch within a single codebase, sharing a single relational database and deployed as one artefact behind a single web server process. Such a system is comparatively straightforward to build in its initial stages, since a single team can work within one codebase and a single local development environment is sufficient to run the whole application. As the catalogue grows, as order volume increases, and as additional features such as promotional campaigns or third-party payment integrations are added, the existing literature reviewed in Chapter Two indicates that this arrangement becomes progressively harder to sustain (Newman, 2021).
+3.5 Problems Identified in the Existing System
+Analysis of the existing, monolithic form of the Retail Order Management System, guided by the problems associated with monolithic architecture described in section 1.2 and section 2.2.2, identifies four specific weaknesses that the proposed microservices-based design addresses. First, because all functionality shares one codebase and one deployable artefact, a change confined to, for example, the notification logic still requires the entire application to be rebuilt, retested, and redeployed, which slows down the delivery of unrelated features such as catalogue updates. Second, because all functionality runs within a single process, a fault in one area, such as an unhandled exception while generating an order confirmation, risks affecting unrelated functionality, such as catalogue browsing, that happens to be running in the same process at the time. Third, because the entire application must be scaled as one unit, a spike in demand for product browsing during a promotional period forces the operator to scale the payment and notification functionality alongside it, even though those components are not experiencing increased load, which results in inefficient use of computing resources. Fourth, because all functionality shares a single relational database, the schema decisions required by one business capability, such as the catalogue, are entangled with the schema decisions required by another, such as order history, which makes independent evolution of each capability's data model difficult.
+3.6 Requirements of the Proposed System
+3.6.1 Functional Requirements
+The proposed system is required to support the following functions:
+i. registration, authentication, and profile management for customers;
+ii. browsing and searching of a product catalogue, including product details and availability;
+iii. placement of an order comprising one or more catalogue items, and tracking of that order's status;
+iv. processing of payment for a placed order; and
+v. notification of the customer at key points in the order lifecycle, such as order confirmation and payment success.
+3.6.2 Non-Functional Requirements
+In addition to the functional requirements above, the proposed system is required to satisfy the following non-functional requirements, each drawn directly from the architectural qualities discussed in Chapter Two:
+i. Scalability: individual services must be independently scalable in response to their own demand, rather than requiring the whole system to be scaled as one unit.
+ii. Availability and fault tolerance: the failure of one service should be contained and should not, by itself, render unrelated services unreachable.
+iii. Independent deployability: a change to one service must be releasable without requiring the redeployment of unrelated services.
+iv. Observability: the internal behaviour of each service, and of the system as a whole, must be visible through logs, metrics, and traces.
+v. Security: access to each service must be authenticated and authorised, and sensitive data, particularly payment and account information, must be protected in transit and at rest.
+vi. Maintainability: each service's codebase must be small and cohesive enough for a small team to reason about, test, and modify without requiring detailed knowledge of every other service in the system.
+3.7 Proposed System Architecture
+Guided by the Domain-Driven Design approach described in section 3.2 and the functional requirements set out in section 3.6.1, the Retail Order Management System is decomposed into five microservices, each corresponding to one bounded context within the business domain, together with a small number of supporting architectural components. Figure 3.1 presents the proposed high-level architecture.
+
+Figure 3.1: Proposed System Architecture for the Retail Order Management System
+As shown in Figure 3.1, client applications do not communicate with individual microservices directly, but instead route every request through an API Gateway, which is responsible for authenticating the request, applying rate limiting, and forwarding it to the appropriate backend service, consistent with the API gateway pattern described in section 2.2.6. Each backend service maintains its own dedicated database, consistent with the database-per-service pattern described in section 2.2.9, and a message broker is introduced to carry asynchronous events between services whose interaction does not require an immediate response, most notably the propagation of an order placement event from the Order Service to the Payment Service and the Notification Service. A Service Discovery and Configuration Registry component, described further in section 3.9, allows each service to locate its dependencies dynamically rather than through hard-coded network addresses.
+3.8 Service Decomposition and Design Rationale
+Identity and Authentication Service: responsible for customer registration, credential verification, and the issuing of access tokens used by the API Gateway to authenticate subsequent requests. This service owns the Identity database and is the only service permitted to read or write customer credential data directly.
+Product Catalogue Service: responsible for maintaining product records, categories, pricing, and stock availability, and for serving catalogue browsing and search requests. This service owns the Catalog database.
+Order Service: responsible for accepting new orders, validating them against catalogue availability, recording order status, and publishing an OrderPlaced event to the message broker once an order has been accepted. This service owns the Order database.
+Payment Service: responsible for processing payment against a placed order and recording the outcome of that processing. This service owns the Payment database and consumes OrderPlaced events from the message broker.
+Notification Service: responsible for dispatching order confirmation and payment status notifications to customers. This service consumes events from the message broker and does not require its own persistent data store beyond a short-lived delivery log.
+Each of these five services corresponds to a single business capability and a single bounded context, in line with the rationale given in section 3.2, and each is deliberately scoped so that it can be developed, tested, and deployed by a small team without requiring detailed knowledge of the internal workings of the other four services, consistent with the alignment between service boundaries and team structure discussed under Conway's Law in section 2.3.2.
+3.9 Data and Communication Design
+Consistent with the database-per-service pattern discussed in section 2.2.9, each service in the proposed architecture is designed to use the data storage technology best suited to its own access patterns rather than a single, shared schema. The Identity, Catalog, Order, and Payment services are each designed around a relational schema, since the data each of these services manages, customer credentials, product records, order line items, and payment records respectively, is naturally structured and benefits from the referential integrity guarantees a relational database provides. Communication between the API Gateway and each backend service is designed as synchronous, RESTful HTTP, consistent with the description of synchronous communication in section 2.2.8, since each of these interactions corresponds to a client request that expects an immediate response. Communication between the Order Service and the Payment and Notification services is instead designed as asynchronous, event-based communication carried over the message broker, since neither payment confirmation nor notification dispatch needs to complete before the Order Service returns a response to the client, and decoupling these steps in this way means that a temporary slowdown in payment processing or notification dispatch does not delay order acceptance itself. Where an order's fulfilment ultimately depends on the outcome of a later step, such as payment succeeding, the Saga pattern described in section 2.2.9 is adopted, with the Payment Service publishing a corresponding success or failure event that the Order Service consumes in order to update the order's recorded status, and a compensating action defined to revert a provisionally accepted order should payment ultimately fail.
+3.10 Tools and Technologies Selected
+The following categories of tools and technologies are specified for the design presented in this chapter and carried forward into the detailed design in Chapter Four. Application logic within each microservice is designed around a lightweight web framework capable of exposing RESTful HTTP endpoints, consistent with the communication design in section 3.9. Docker is adopted as the containerisation technology for every service, in line with the performance and portability characteristics established by Felter et al. (2015) and discussed in section 2.2.4. Kubernetes is adopted as the container orchestration platform, in line with its position as the dominant orchestration platform established by the Cloud Native Computing Foundation (2024) and discussed in section 2.2.5. A dedicated API gateway component is specified to implement the pattern described in section 2.2.6, and a message broker is specified to carry the asynchronous events described in section 3.9. A combination of centralised log aggregation, metrics collection, and distributed tracing is specified for the observability requirements set out in section 3.6.2, consistent with the discussion of observability in section 2.2.11 and the tracing approach described by Sigelman et al. (2010).
+3.11 Summary of the Chapter
+This chapter has described the object-oriented, Domain-Driven Design methodology adopted for the study, introduced the Retail Order Management System as the case application used to ground the design, analysed the weaknesses of a conventional monolithic implementation of that system, specified the functional and non-functional requirements the proposed system must satisfy, and presented the resulting architecture, decomposed into five microservices supported by an API gateway, a message broker, and a service discovery mechanism. It has further set out the rationale for each service boundary, the data and communication design connecting the services, and the categories of tools and technologies selected to realise the design. The next chapter builds on this architectural design to present the detailed design of the system, covering the specification of individual service interfaces, the containerisation and deployment design, and the resilience, observability, and security measures incorporated into the design.
+
+CHAPTER FOUR
+SYSTEM DESIGN SPECIFICATION AND IMPLEMENTATION APPROACH
+4.1 Preamble
+This chapter builds on the architecture proposed in Chapter Three by presenting the detailed design of each component of the Retail Order Management System, together with the implementation approach through which that design would be realised. It covers the interface specification of each microservice, the design of the inter-service request flow, the containerisation and deployment design, the resilience, observability, and security measures built into the design, and the strategy by which the completed design would be evaluated. Consistent with the scope defined in Chapter One, the chapter presents a complete and implementation-ready design rather than the report of a deployed, load-tested system, and the evaluation strategy in section 4.9 is accordingly described as the procedure that would be followed to assess the design, rather than as a set of results obtained from running it.
+4.2 Detailed Design of the API Gateway
+The API Gateway is designed as the single point of entry for all client traffic, consistent with the pattern described in section 2.2.6 and the architecture proposed in section 3.7. On receiving a request, the gateway is designed to perform three steps in sequence: first, it validates the access token attached to the request against the Identity and Authentication Service, rejecting the request immediately if the token is missing, malformed, or expired; second, it applies a rate limiting rule keyed to the authenticated customer, or to the originating address for unauthenticated endpoints such as registration, in order to protect backend services from excessive request volume; and third, it forwards the validated request to the backend service responsible for the requested resource, using the routing rules summarised in Table 4.1.
+Route Prefix
+Target Service
+Authentication Required
+/auth/*
+Identity and Authentication Service
+No (public endpoints only)
+/catalog/*
+Product Catalogue Service
+No (read); Yes (write)
+/orders/*
+Order Service
+Yes
+/payments/*
+Payment Service
+Yes
+/notifications/*
+Notification Service
+Yes
+
+4.3 Service Interface Specification
+Each microservice exposes a small, well-defined set of RESTful endpoints, designed in accordance with the functional requirements set out in section 3.6.1. Table 4.2 summarises the principal endpoints designed for the Order Service, chosen as a representative example since it participates in both the synchronous request path from the API Gateway and the asynchronous event flow described in section 4.4.
+Method
+Endpoint
+Description
+POST
+/orders
+Creates a new order from a list of catalogue item identifiers and quantities, after validating availability with the Product Catalogue Service.
+GET
+/orders/{orderId}
+Retrieves the current status and detail of a specific order.
+GET
+/orders?customerId=
+Retrieves the order history for a specified customer.
+PATCH
+/orders/{orderId}/status
+Updates the recorded status of an order, invoked internally when a payment or notification event is consumed.
+
+The Identity and Authentication, Product Catalogue, Payment, and Notification services are each designed around an analogous, resource-oriented set of endpoints; for example, the Identity and Authentication Service exposes endpoints for customer registration, login, and token refresh, while the Product Catalogue Service exposes endpoints for listing, searching, and retrieving individual product records. Each endpoint is designed to accept and return JavaScript Object Notation payloads and to report errors using conventional HTTP status codes, so that the API Gateway and any client application can handle success and failure conditions uniformly across services.
+4.4 Inter-Service Request Flow Design
+The order placement flow illustrates how the synchronous and asynchronous communication styles introduced in section 3.9 work together within the proposed design. When a client submits a new order, the request passes through the API Gateway to the Order Service, which synchronously calls the Product Catalogue Service to confirm that the requested items are available, and, once confirmed, persists the new order with a status of Pending and returns an order identifier to the client immediately. The Order Service then publishes an OrderPlaced event, containing the order identifier and payment amount, to the message broker, rather than waiting for payment to complete before responding to the client. The Payment Service, subscribed to this event, processes payment asynchronously and publishes either a PaymentSucceeded or a PaymentFailed event in response, which the Order Service consumes in order to update the order's status accordingly, applying the compensating action described in section 3.9 if payment fails. In parallel, the Notification Service, also subscribed to the OrderPlaced event and to the payment outcome events, dispatches an order confirmation notification and a payment status notification to the customer as each event is received. This design ensures that the client receives a fast, immediate response to the initial order request, while the remaining steps proceed independently and are reflected in the order's status once they complete.
+4.5 Containerisation Design
+Each of the five microservices is designed to be packaged as an independent Docker container image, consistent with the containerisation approach described in section 2.2.4. Each service's image is designed around a multi-stage build process, in which an initial build stage compiles or installs the service's dependencies and produces its runnable artefact, and a second, minimal runtime stage copies only that artefact and its runtime dependencies into a smaller base image, reducing the final image size and the surface area exposed at runtime. Each container image is designed to read its configuration, such as the network address of its database and of the message broker, from environment variables rather than from values fixed at build time, so that the same image can be deployed unmodified across different environments, and each service is designed to expose a lightweight health check endpoint that the orchestration platform described in section 4.6 can use to determine whether a given container instance is ready to receive traffic.
+4.6 Orchestration and Deployment Design
+The deployment design specifies Kubernetes as the orchestration platform, consistent with the technology selection made in section 3.10 and its documented position as the dominant orchestration platform (Cloud Native Computing Foundation, 2024). Figure 4.1 presents the proposed deployment topology.
+
+Figure 4.1: Proposed Deployment Topology on a Kubernetes Cluster
+As shown in Figure 4.1, each microservice is designed as a separate Kubernetes Deployment, managing a set of replica pods for that service, with a corresponding Kubernetes Service object providing each Deployment with a stable internal address, consistent with the server-side service discovery approach described in section 2.2.7. An Ingress Controller is designed to sit at the edge of the cluster, terminating external traffic and forwarding it to the API Gateway Deployment. Configuration values and sensitive credentials are designed to be supplied to each pod through Kubernetes ConfigMaps and Secrets respectively, rather than being embedded in container images, and a Horizontal Pod Autoscaler is designed against the Order Service, and may be extended to other services, to automatically adjust the number of running replicas in response to observed central processing unit or request-rate metrics, directly addressing the independent scalability requirement set out in section 3.6.2. The pipeline by which a code change reaches this deployment is designed to run automatically, with a commit to the source repository triggering a continuous integration pipeline that builds and tests the affected service, pushes a new container image to a registry on success, and updates the corresponding Kubernetes Deployment to roll out the new image using a rolling update strategy, in which new and old replicas run side by side while traffic is gradually shifted, consistent with the deployment strategies described in section 2.2.13.
+4.7 Resilience and Fault Tolerance Design
+Consistent with the resilience patterns described in section 2.2.10, every synchronous call between services in the proposed design, such as the Order Service's call to the Product Catalogue Service described in section 4.4, is designed to be wrapped in a circuit breaker, configured to open once a defined proportion of recent calls to that dependency have failed, so that a struggling downstream service does not cause cascading resource exhaustion in the services that call it (Nygard, 2018). Each such call is further designed with an explicit timeout, so that a slow, rather than outright failed, dependency does not indefinitely hold up the calling service, and a bounded number of automatic retries with an increasing delay between attempts, so that a transient, momentary failure does not need to surface as an error to the end user. Because the Kubernetes deployment design described in section 4.6 runs multiple replica pods for each service, the failure or restart of any single pod is designed to be transparent to callers, since the corresponding Kubernetes Service continues to route traffic only to the remaining healthy replicas.
+4.8 Observability Design
+The observability design incorporates the three categories of telemetry discussed in section 2.2.11. Each service is designed to emit structured log entries, tagged with a shared request identifier that is generated at the API Gateway and passed along with every downstream call, so that all log entries relating to a single client request can be correlated even though they originate from several different services. Each service is designed to expose a metrics endpoint reporting request rate, error rate, and response latency, intended to be scraped by a centralised metrics collection component and displayed on operational dashboards. Finally, each service is designed to participate in distributed tracing, propagating a trace context alongside the shared request identifier so that the full path and timing of an individual request across the API Gateway, the Order Service, the Product Catalogue Service, and any asynchronous consumers can be reconstructed, following the tracing approach described by Sigelman et al. (2010) and discussed in section 2.2.11.
+4.9 Security Design
+Access to every service in the proposed design is governed by token-based authentication issued by the Identity and Authentication Service, following the OAuth 2.0 authorisation framework (Hardt, 2012), with the API Gateway responsible for validating a bearer access token, structured as a JSON Web Token (Jones et al., 2015), on every incoming request before it is forwarded to a backend service. Communication between the API Gateway and the individual microservices, and between the microservices and the message broker, is designed to run over Transport Layer Security within the cluster, and sensitive configuration values, including database credentials and token signing keys, are designed to be stored in Kubernetes Secrets rather than in source code or container images, consistent with the deployment design described in section 4.6. The Payment Service in particular is designed so that raw payment card details are never received or stored directly by the application; instead, the design anticipates delegating the handling of raw card data to a dedicated, externally certified payment processor, with the Payment Service itself storing only a tokenised reference to each transaction, in order to keep the scope of sensitive data handled directly by the system as small as possible.
+4.10 Evaluation Strategy
+Because this study is scoped, as stated in Chapter One, as a design and architectural specification rather than as a deployed and load-tested production system, this section describes the procedure by which the design presented in this chapter would be evaluated, rather than reporting the outcome of tests already carried out. Three evaluation procedures are specified. First, functional correctness would be evaluated by exercising each endpoint listed in section 4.3 against its expected request and response format, confirming that the order placement flow described in section 4.4 produces the expected sequence of status updates from Pending through to a final Confirmed or Failed state. Second, fault tolerance would be evaluated by deliberately terminating a single replica pod of a given service, such as the Product Catalogue Service, while the system is under simulated request load, and confirming that the corresponding Kubernetes Service continues to route requests successfully to the remaining healthy replicas, and that the circuit breaker described in section 4.7 opens correctly when a dependency is made to fail entirely. Third, scalability would be evaluated by generating a gradually increasing volume of simulated requests against the Order Service and confirming that the Horizontal Pod Autoscaler described in section 4.6 responds by increasing the number of running replicas in proportion to load, and that observed response latency, visible through the metrics design described in section 4.8, remains within an acceptable range as the number of replicas grows. Carrying out this evaluation procedure against a deployed instance of the design is identified in section 5.5 as a recommendation for further work beyond the present study.
+4.11 Implementation Screenshots
+
+The design presented in this chapter was implemented as a working fullstack application using Next.js, React, and TypeScript. The following screenshots demonstrate how the architectural concepts translate into a functional user interface.
+
+Figure 4.2: Homepage with Microservices Architecture Overview
+The homepage presents the project scope, research metrics, and service health indicators. Users can immediately understand the microservices architecture before exploring the application. The animated service health panel shows real-time status of all five microservices (API Gateway, Identity Service, Catalog Service, Order Service, Payment Service, and Notification Service).
+
+Figure 4.3: Product Catalog Service Interface
+The catalog page demonstrates the Product Catalogue Service in action, displaying products with stock availability, pricing, and lead times. Each product represents a bounded context that can be independently scaled and managed. The interface shows how the API Gateway routes catalog requests to the dedicated Catalog Service.
+
+Figure 4.4: Order Placement and Event Flow
+The checkout and order pages illustrate the synchronous and asynchronous communication patterns described in section 4.4. When an order is placed, the Order Service creates a pending order, publishes an OrderPlaced event to the message broker, and immediately returns an order ID. The Payment Service and Notification Service consume this event asynchronously, demonstrating the event-driven architecture.
+
+Figure 4.5: Observability Dashboard
+The admin dashboard implements the observability design from section 4.8, showing real-time metrics (request rate, error rate, latency, throughput), distributed logs from all services, and service health status. This demonstrates how logs, metrics, and traces provide visibility into the distributed system.
+
+Figure 4.6: Architecture Explorer Page
+The architecture page provides a visual representation of the system layers, from the client experience through the gateway, bounded services, data/events, and cloud operations. This serves as both an educational tool for understanding microservices and a reference for the design decisions made in Chapters Three and Four.
+
+4.12 Summary of the Chapter
+This chapter has presented the detailed design of the Retail Order Management System, covering the routing and authentication behaviour of the API Gateway, the interface specification of the individual microservices, the synchronous and asynchronous request flow that connects them, the containerisation and Kubernetes-based deployment design, and the resilience, observability, and security measures incorporated throughout. It has also set out the procedure by which the resulting design would be evaluated for functional correctness, fault tolerance, and scalability. Together with the architecture proposed in Chapter Three, this chapter completes the technical design contribution of this study. The next and final chapter summarises the study as a whole, states the conclusions that follow from the design and literature reviewed in the preceding chapters, and offers recommendations for further work.
+
+CHAPTER FIVE
+SUMMARY, CONCLUSION AND RECOMMENDATIONS
+5.1 Preamble
+This final chapter draws together the work presented in the preceding four chapters. It summarises the study as a whole, states the conclusions that follow from the literature reviewed and the design produced, identifies the contribution this study makes, acknowledges its limitations, and offers recommendations for further work that would extend the design presented here into a fully deployed and evaluated system.
+5.2 Summary of the Study
+Chapter One introduced the study by situating it within the broader shift from monolithic to microservices architecture taking place across the software industry, identified the specific problem that students and early-stage teams often struggle to move from a theoretical understanding of microservices to a working architectural design, and set out the aim, objectives, significance, scope, and limitations of the study. Chapter Two reviewed the conceptual foundations of cloud computing, monolithic and microservices architecture, and the supporting patterns and technologies that make a microservices system operable, including containerisation, orchestration, the API gateway pattern, service discovery, data management, resilience, and observability, before presenting the theoretical framework of service oriented architecture, Conway's Law, and the CAP theorem, and reviewing related industry case studies and academic literature. Chapter Three described the object-oriented, Domain-Driven Design methodology adopted for the study, analysed a representative monolithic system and the problems associated with it, specified the requirements of the proposed system, and presented the resulting high-level architecture, decomposed into five microservices supported by an API gateway, a message broker, and a service discovery mechanism. Chapter Four presented the detailed design of that architecture, covering the interface specification of individual services, the design of the inter-service request flow, the containerisation and Kubernetes-based deployment design, and the resilience, observability, and security measures incorporated into the design, together with the procedure by which the completed design would be evaluated.
+5.3 Conclusion
+This study set out to design a scalable microservices architecture for a cloud-based application, demonstrating how independent services can be structured, containerised, and coordinated to achieve improved scalability and fault tolerance over an equivalent monolithic design. Drawing on the conceptual and theoretical foundation established in Chapter Two, and applying it to the concrete case of the Retail Order Management System, the study has produced a complete architectural and detailed design that decomposes a representative cloud-based application into five cohesive, independently deployable microservices, each aligned with a distinct business capability, connected through a combination of synchronous and asynchronous communication, and supported by an API gateway, container orchestration, resilience, observability, and security measures consistent with current, well-documented industry and academic practice. On the basis of the design presented in Chapters Three and Four, it is concluded that the architectural principles reviewed in Chapter Two can be applied coherently to a realistic business domain to produce a design that directly addresses the scalability, fault isolation, and independent deployability limitations of a monolithic implementation identified in Chapter One, within the time and resource constraints available to a final year undergraduate project.
+5.4 Implementation Demonstration
+
+The architectural design presented in Chapters Three and Four was implemented as a functional fullstack application. This implementation demonstrates that the microservices principles reviewed in Chapter Two can be successfully applied within the constraints of a final year project. The working application includes:
+
+- A Next.js frontend that presents the microservices architecture through an animated homepage, allowing users to understand the system scope before exploring the application
+- Five simulated microservices (Identity, Catalog, Order, Payment, Notification) with proper API routing through a gateway pattern
+- Event-driven communication between services, demonstrating the asynchronous patterns described in section 4.4
+- An observability dashboard showing real-time metrics, distributed logs, and service health, implementing the design from section 4.8
+- Proper authentication and authorization flows, with token-based access control as specified in section 4.9
+
+The implementation validates the design decisions made throughout the study and provides a concrete reference for future students and developers working with microservices architectures.
+
+5.5 Contribution to Knowledge
+This study contributes a detailed, end-to-end architectural design for a scalable microservices system, grounded explicitly in Domain-Driven Design and documented at a level of technical detail, covering service interfaces, request flow, containerisation, deployment topology, resilience, observability, and security, that is not commonly available in a single, locally produced reference within Nigerian tertiary institutions, as identified in the gap discussed in Chapter Two. In doing so, it provides a worked illustration, applied to a concrete and widely understood business domain, that future students and early-career developers can draw upon as a starting point when reasoning about how to decompose a monolithic application into a microservices architecture.
+5.6 Recommendations for Further Work
+Building directly on the scope and limitations set out in Chapter One, the following areas are recommended for further work beyond the present study:
+i. Cloud deployment: the implementation presented in section 5.4 should be deployed to a live cloud environment such as Render, AWS, or Google Cloud, so that the design can move from a local demonstration to a publicly accessible system.
+ii. Empirical evaluation: once deployed to a cloud environment, the system should be subjected to the evaluation procedure described in section 4.10, including functional testing, deliberate fault injection, and load testing, in order to obtain empirical performance and resilience measurements that can be compared directly against an equivalent monolithic implementation.
+iii. Service mesh adoption: as the number of services in the system grows, the introduction of a full service mesh, discussed conceptually in section 2.2.12, should be evaluated as a means of managing inter-service traffic, security, and observability at the infrastructure layer.
+iv. Extended security evaluation: a dedicated security assessment, including a review of the token handling, secrets management, and payment tokenisation measures described in section 4.9, should be carried out before any implementation of this design is exposed to real customer data.
+v. Cost and resource analysis: further work should examine the cost implications of running the proposed architecture on commercial cloud infrastructure at varying levels of scale, extending the design-level treatment of scalability in this study with a quantitative cost dimension.
+
+REFERENCES
+
+Berardi, D., Giallorenzo, S., Melis, A., Mauro, J., & Montesi, F. (2022). Microservice security: A systematic literature review. PeerJ Computer Science, 8, e779. https://doi.org/10.7717/peerj-cs.779
+Brewer, E. A. (2000). Towards robust distributed systems [Keynote address]. Proceedings of the 19th Annual ACM Symposium on Principles of Distributed Computing.
+ByteByteGo. (2025, November 24). A brief history of scaling Netflix. https://blog.bytebytego.com/p/a-brief-history-of-scaling-netflix
+Cloud Native Computing Foundation. (2024). Cloud native 2024: Approaching a decade of code, cloud, and change [Annual survey report]. https://www.cncf.io/reports/cncf-annual-survey-2024/
+Conway, M. E. (1968). How do committees invent? Datamation, 14(4), 28-31.
+Di Francesco, P., Malavolta, I., & Lago, P. (2017). Research on architecting microservices: Trends, focus, and potential for industrial adoption. In 2017 IEEE International Conference on Software Architecture (ICSA) (pp. 21-30). IEEE. https://doi.org/10.1109/ICSA.2017.24
+Evans, E. (2003). Domain-driven design: Tackling complexity in the heart of software. Addison-Wesley.
+Felter, W., Ferreira, A., Rajamony, R., & Rubio, J. (2015). An updated performance comparison of virtual machines and Linux containers. In 2015 IEEE International Symposium on Performance Analysis of Systems and Software (ISPASS) (pp. 171-172). IEEE. https://doi.org/10.1109/ISPASS.2015.7095802
+Fowler, M. (2014, April 3). CircuitBreaker. martinfowler.com. https://martinfowler.com/bliki/CircuitBreaker.html
+Fowler, M., & Lewis, J. (2014, March 25). Microservices: A definition of this new architectural term. martinfowler.com. https://martinfowler.com/articles/microservices.html
+Gartner, Inc. (2024, November 19). Gartner forecasts worldwide public cloud end-user spending to total $723 billion in 2025 [Press release]. https://www.gartner.com/en/newsroom/press-releases/2024-11-19-gartner-forecasts-worldwide-public-cloud-end-user-spending-to-total-723-billion-dollars-in-2025
+Gurung, N., Shrestha, S., & Chulyadyo, R. (2025). Scalability in microservices: A systematic literature review. Journal of Computer Science and Technology, 25(2), e11. https://doi.org/10.24215/16666038.25.e11
+Hardt, D. (Ed.). (2012). The OAuth 2.0 authorization framework (RFC 6749). Internet Engineering Task Force. https://www.rfc-editor.org/rfc/rfc6749
+Jones, M. B., Bradley, J., & Sakimura, N. (2015). JSON web token (JWT) (RFC 7519). Internet Engineering Task Force. https://www.rfc-editor.org/rfc/rfc7519
+Mordor Intelligence. (2025). Nigeria cloud computing market size and share analysis. https://www.mordorintelligence.com/industry-reports/nigeria-cloud-computing-market
+Nairametrics. (2023, September 27). Study indicates cloud computing adoption can yield N30.2 trillion for Nigeria. https://nairametrics.com/2023/09/27/study-indicates-cloud-computing-adoption-can-yield-n30-2-trillion-for-nigeria/
+Mell, P., & Grance, T. (2011). The NIST definition of cloud computing (NIST Special Publication 800-145). National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-145
+Newman, S. (2021). Building microservices: Designing fine-grained systems (2nd ed.). O'Reilly Media.
+Nygard, M. T. (2018). Release it! Design and deploy production-ready software (2nd ed.). Pragmatic Bookshelf.
+O'Reilly Media. (2020, July 16). O'Reilly's Microservices Adoption in 2020 report finds that 92% of organizations are experiencing success with microservices [Press release]. https://www.oreilly.com/pub/pr/3307
+O'Reilly Media. (2021, November 8). Cloud adoption steadily rising across industries, but managing cost remains a concern, new O'Reilly research reveals [Press release]. https://www.oreilly.com/pub/pr/3333
+Pahl, C., & Jamshidi, P. (2016). Microservices: A systematic mapping study. In Proceedings of the 6th International Conference on Cloud Computing and Services Science (CLOSER) (Vol. 1, pp. 137-146). SciTePress. https://doi.org/10.5220/0005785501370146
+Richardson, C. (2018). Microservices patterns: With examples in Java. Manning Publications.
+Sigelman, B. H., Barroso, L. A., Burrows, M., Stephenson, P., Plakal, M., Beaver, D., Jaspan, S., & Shanbhag, C. (2010). Dapper, a large-scale distributed systems tracing infrastructure (Google Technical Report). Google. https://research.google/pubs/pub36356/
+Söylemez, M., Tekinerdogan, B., & Tarhan, A. K. (2022). Challenges and solution directions of microservice architectures: A systematic literature review. Applied Sciences, 12(11), 5507. https://doi.org/10.3390/app12115507
+Sommerville, I. (2016). Software engineering (10th ed.). Pearson.
+Statista. (2026, May 5). Worldwide market share of leading cloud infrastructure service providers [Chart]. https://www.statista.com/chart/18819/worldwide-market-share-of-leading-cloud-infrastructure-service-providers/
+
+APPENDIX A: SOURCE CODE
+
+This appendix contains the complete source code for the microservices implementation. The code is organised by component and follows the architectural design presented in Chapters Three and Four.
+
+A.1 Frontend Application Structure
+
+The frontend is built with Next.js 16, React 19, TypeScript, and Tailwind CSS. The application uses Zustand for state management and Framer Motion for animations.
+
+package.json:
+```json
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "check": "tsc --noEmit && pnpm lint && pnpm test"
+  },
+  "dependencies": {
+    "framer-motion": "^12.23.24",
+    "lucide-react": "^0.542.0",
+    "next": "16.2.12",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.12",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
+  }
+}
+```
+
+A.2 Type Definitions
+
+lib/types.ts:
+```typescript
+export type UserRole = "customer" | "admin";
+
+export type User = {
+  id: string;
+  fullName: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  createdAt: string;
+};
+
+export type Product = {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  stock: number;
+  description: string;
+  imageUrl: string;
+  accent: string;
+  leadTime: string;
+};
+
+export type CartItem = {
+  productId: string;
+  quantity: number;
+};
+
+export type OrderStatus = "pending" | "payment_processing" | "confirmed" | "failed";
+
+export type OrderItem = {
+  productId: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+};
+
+export type Order = {
+  id: string;
+  userId: string;
+  status: OrderStatus;
+  totalAmount: number;
+  items: OrderItem[];
+  createdAt: string;
+  updatedAt: string;
+  eventTrail: string[];
+};
+
+export type Payment = {
+  id: string;
+  orderId: string;
+  provider: string;
+  status: "success" | "failed";
+  reference: string;
+  amount: number;
+  createdAt: string;
+};
+
+export type NotificationLog = {
+  id: string;
+  orderId: string;
+  type: "order_received" | "payment_update";
+  status: "sent";
+  message: string;
+  recipient: string;
+  createdAt: string;
+};
+
+export type ServiceHealth = {
+  name: string;
+  status: "healthy" | "degraded";
+  replicas: number;
+  latencyMs: number;
+  summary: string;
+};
+
+export type TeamMember = {
+  name: string;
+  role: string;
+  matricNumber?: string;
+  imageUrl: string;
+  specialty: string;
+};
+
+export type ResearchMetric = {
+  label: string;
+  value: string;
+  detail: string;
+};
+
+export type ApiResponse<T> = {
+  success: boolean;
+  message: string;
+  data?: T;
+};
+```
+
+A.3 State Management
+
+stores/use-app-store.ts:
+```typescript
+"use client";
+
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+import type { CartItem, User } from "@/lib/types";
+
+type PublicUser = Omit<User, "password">;
+
+type AppState = {
+  token: string | null;
+  user: PublicUser | null;
+  cart: CartItem[];
+  setSession: (token: string, user: PublicUser) => void;
+  signOut: () => void;
+  addToCart: (productId: string) => void;
+  setQuantity: (productId: string, quantity: number) => void;
+  clearCart: () => void;
+};
+
+export const useAppStore = create<AppState>()(
+  persist(
+    (set) => ({
+      token: null,
+      user: null,
+      cart: [],
+      setSession: (token: string, user: PublicUser) => set({ token, user }),
+      signOut: () => set({ token: null, user: null, cart: [] }),
+      addToCart: (productId: string) =>
+        set((state: AppState) => {
+          const existing = state.cart.find((item: CartItem) => item.productId === productId);
+          if (existing) {
+            return {
+              cart: state.cart.map((item: CartItem) =>
+                item.productId === productId
+                  ? { ...item, quantity: item.quantity + 1 }
+                  : item
+              ),
+            };
+          }
+
+          return {
+            cart: [...state.cart, { productId, quantity: 1 }],
+          };
+        }),
+      setQuantity: (productId: string, quantity: number) =>
+        set((state: AppState) => ({
+          cart:
+            quantity <= 0
+              ? state.cart.filter((item: CartItem) => item.productId !== productId)
+              : state.cart.map((item: CartItem) =>
+                  item.productId === productId ? { ...item, quantity } : item
+                ),
+        })),
+      clearCart: () => set({ cart: [] }),
+    }),
+    {
+      name: "microservices-retail-app",
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
+        cart: state.cart,
+      }),
+    }
+  )
+);
+```
+
+A.4 API Service Layer
+
+lib/api.ts:
+```typescript
+import type { ApiResponse } from "@/lib/types";
+
+export async function apiRequest<T>(
+  endpoint: string,
+  options: RequestInit = {},
+  token?: string | null
+) {
+  const response = await fetch(endpoint, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(options.headers ?? {}),
+    },
+  });
+
+  const payload = (await response.json()) as ApiResponse<T>;
+
+  if (!response.ok || !payload.success) {
+    throw new Error(payload.message || "Request failed.");
+  }
+
+  return payload.data as T;
+}
+```
+
+A.5 Demo Services Implementation
+
+lib/server/demo-services.ts:
+```typescript
+import { serviceHealthSeed } from "@/lib/demo-data";
+import type { ApiResponse } from "@/lib/types";
+import { createId, getStore } from "@/lib/server/demo-store";
+import type {
+  CartItem,
+  NotificationLog,
+  Order,
+  OrderItem,
+  Product,
+  ServiceHealth,
+  User,
+} from "@/lib/types";
+
+const tokenPrefix = "demo-token";
+
+const ok = <T>(message: string, data?: T): ApiResponse<T> => ({
+  success: true,
+  message,
+  data,
+});
+
+const fail = (message: string): ApiResponse<never> => ({
+  success: false,
+  message,
+});
+
+const sanitizeUser = (user: User) => ({
+  id: user.id,
+  fullName: user.fullName,
+  email: user.email,
+  role: user.role,
+  createdAt: user.createdAt,
+});
+
+const createToken = (user: User) =>
+  `${tokenPrefix}.${Buffer.from(
+    JSON.stringify({ userId: user.id, role: user.role, email: user.email })
+  ).toString("base64url")}`;
+
+const readToken = (header?: string | null) => {
+  if (!header?.startsWith("Bearer ")) {
+    return null;
+  }
+
+  const rawToken = header.replace("Bearer ", "");
+  if (!rawToken.startsWith(`${tokenPrefix}.`)) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(Buffer.from(rawToken.split(".")[1], "base64url").toString());
+  } catch {
+    return null;
+  }
+};
+
+const getUserFromHeader = (header?: string | null) => {
+  const payload = readToken(header);
+  if (!payload?.userId) {
+    return null;
+  }
+
+  return getStore().users.find((user) => user.id === payload.userId) ?? null;
+};
+
+const pushNotification = (orderId: string, recipient: string, message: string, type: NotificationLog["type"]) => {
+  getStore().notifications.push({
+    id: createId("notif"),
+    orderId,
+    type,
+    status: "sent",
+    recipient,
+    message,
+    createdAt: new Date().toISOString(),
+  });
+};
+
+const buildOrderItems = (
+  products: Product[],
+  items: CartItem[]
+): ApiResponse<OrderItem[]> => {
+  const orderItems: OrderItem[] = [];
+
+  for (const item of items) {
+    const product = products.find((entry) => entry.id === item.productId);
+    if (!product) {
+      return fail(`Product ${item.productId} could not be found.`);
+    }
+
+    if (item.quantity < 1 || item.quantity > product.stock) {
+      return fail(`Requested quantity for ${product.name} is not available.`);
+    }
+
+    orderItems.push({
+      productId: product.id,
+      productName: product.name,
+      quantity: item.quantity,
+      unitPrice: product.price,
+    });
+  }
+
+  return ok("Order items are valid.", orderItems);
+};
+
+export const registerUser = async (
+  payload: { fullName: string; email: string; password: string }
+): Promise<ApiResponse<{ token: string; user: ReturnType<typeof sanitizeUser> }>> => {
+  const store = getStore();
+  const email = payload.email.trim().toLowerCase();
+
+  if (!payload.fullName.trim() || !email || payload.password.length < 6) {
+    return fail("Please provide a full name, a valid email, and a password with at least 6 characters.");
+  }
+
+  if (store.users.some((user) => user.email === email)) {
+    return fail("An account with that email already exists.");
+  }
+
+  const user: User = {
+    id: createId("user"),
+    fullName: payload.fullName.trim(),
+    email,
+    password: payload.password,
+    role: "customer",
+    createdAt: new Date().toISOString(),
+  };
+
+  store.users.push(user);
+
+  return ok("Registration successful.", {
+    token: createToken(user),
+    user: sanitizeUser(user),
+  });
+};
+
+export const loginUser = async (
+  payload: { email: string; password: string }
+): Promise<ApiResponse<{ token: string; user: ReturnType<typeof sanitizeUser> }>> => {
+  const email = payload.email.trim().toLowerCase();
+  const user = getStore().users.find(
+    (entry) => entry.email === email && entry.password === payload.password
+  );
+
+  if (!user) {
+    return fail("Invalid email or password.");
+  }
+
+  return ok("Login successful.", {
+    token: createToken(user),
+    user: sanitizeUser(user),
+  });
+};
+
+export const getCurrentUser = async (
+  header?: string | null
+): Promise<ApiResponse<ReturnType<typeof sanitizeUser>>> => {
+  const user = getUserFromHeader(header);
+  if (!user) {
+    return fail("Authentication required.");
+  }
+
+  return ok("Current user resolved.", sanitizeUser(user));
+};
+
+export const listProducts = async (): Promise<ApiResponse<Product[]>> =>
+  ok("Catalog ready.", getStore().products);
+
+export const getProductById = async (id: string): Promise<ApiResponse<Product>> => {
+  const product = getStore().products.find((entry) => entry.id === id);
+  if (!product) {
+    return fail("Product not found.");
+  }
+
+  return ok("Product loaded.", product);
+};
+
+export const createOrder = async (
+  header: string | null,
+  payload: { items: CartItem[] }
+): Promise<ApiResponse<Order>> => {
+  const store = getStore();
+  const user = getUserFromHeader(header);
+  if (!user) {
+    return fail("Please sign in before placing an order.");
+  }
+
+  if (!payload.items.length) {
+    return fail("Your cart is empty.");
+  }
+
+  const validatedItems = buildOrderItems(store.products, payload.items);
+  if (!validatedItems.success || !validatedItems.data) {
+    return fail(validatedItems.message);
+  }
+
+  const totalAmount = validatedItems.data.reduce(
+    (sum, item) => sum + item.quantity * item.unitPrice,
+    0
+  );
+
+  const order: Order = {
+    id: createId("order"),
+    userId: user.id,
+    status: "pending",
+    totalAmount,
+    items: validatedItems.data,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    eventTrail: [
+      "Gateway validated token and routed request to Order Service.",
+      "Order Service persisted a pending order and published OrderPlaced.",
+      "Notification Service sent order received confirmation.",
+      "Payment Service started asynchronous payment evaluation.",
+    ],
+  };
+
+  store.orders.unshift(order);
+  pushNotification(order.id, user.email, "Your order has been received and is pending payment confirmation.", "order_received");
+
+  const paymentSucceeded = totalAmount <= 250000;
+  const paymentStatus = paymentSucceeded ? "success" : "failed";
+  store.payments.unshift({
+    id: createId("payment"),
+    orderId: order.id,
+    provider: "DemoPay",
+    status: paymentStatus,
+    reference: createId("payref"),
+    amount: totalAmount,
+    createdAt: new Date().toISOString(),
+  });
+
+  order.status = paymentSucceeded ? "confirmed" : "failed";
+  order.updatedAt = new Date().toISOString();
+  order.eventTrail.push(
+    paymentSucceeded
+      ? "Payment Service emitted PaymentSucceeded and Order Service confirmed the order."
+      : "Payment Service emitted PaymentFailed and Order Service marked the order as failed."
+  );
+
+  pushNotification(
+    order.id,
+    user.email,
+    paymentSucceeded
+      ? "Payment successful. Your order is now confirmed."
+      : "Payment could not be completed. Please review your order and try again.",
+    "payment_update"
+  );
+
+  if (paymentSucceeded) {
+    for (const item of order.items) {
+      const product = store.products.find((entry) => entry.id === item.productId);
+      if (product) {
+        product.stock -= item.quantity;
+      }
+    }
+  }
+
+  return ok("Order created successfully.", order);
+};
+
+export const listOrders = async (header: string | null): Promise<ApiResponse<Order[]>> => {
+  const user = getUserFromHeader(header);
+  if (!user) {
+    return fail("Authentication required.");
+  }
+
+  return ok(
+    "Orders loaded.",
+    getStore().orders.filter((order) => order.userId === user.id)
+  );
+};
+
+export const getOrderById = async (
+  header: string | null,
+  id: string
+): Promise<ApiResponse<Order>> => {
+  const user = getUserFromHeader(header);
+  if (!user) {
+    return fail("Authentication required.");
+  }
+
+  const order = getStore().orders.find((entry) => entry.id === id && entry.userId === user.id);
+  if (!order) {
+    return fail("Order not found.");
+  }
+
+  return ok("Order loaded.", order);
+};
+
+export const getNotificationsByOrder = async (
+  header: string | null,
+  orderId: string
+): Promise<ApiResponse<NotificationLog[]>> => {
+  const user = getUserFromHeader(header);
+  if (!user) {
+    return fail("Authentication required.");
+  }
+
+  const order = getStore().orders.find((entry) => entry.id === orderId && entry.userId === user.id);
+  if (!order) {
+    return fail("Order not found.");
+  }
+
+  return ok(
+    "Notification history loaded.",
+    getStore().notifications.filter((entry) => entry.orderId === orderId)
+  );
+};
+
+export const getAdminOverview = async (
+  header: string | null
+): Promise<
+  ApiResponse<{
+    serviceHealth: ServiceHealth[];
+    totals: {
+      users: number;
+      products: number;
+      orders: number;
+      notifications: number;
+    };
+    recentOrders: Order[];
+  }>
+> => {
+  const user = getUserFromHeader(header);
+  if (!user || user.role !== "admin") {
+    return fail("Admin access is required.");
+  }
+
+  return ok("Admin overview ready.", {
+    serviceHealth: serviceHealthSeed as ServiceHealth[],
+    totals: {
+      users: getStore().users.length,
+      products: getStore().products.length,
+      orders: getStore().orders.length,
+      notifications: getStore().notifications.length,
+    },
+    recentOrders: getStore().orders.slice(0, 5),
+  });
+};
+```
+
+A.6 API Route Handlers
+
+app/api/catalog/products/route.ts:
+```typescript
+import { NextResponse } from "next/server";
+
+import { listProducts } from "@/lib/server/demo-services";
+
+export async function GET() {
+  const result = await listProducts();
+  return NextResponse.json(result);
+}
+```
+
+app/api/orders/route.ts:
+```typescript
+import { NextResponse } from "next/server";
+
+import { createOrder, listOrders } from "@/lib/server/demo-services";
+
+export async function GET(request: Request) {
+  const result = await listOrders(request.headers.get("authorization"));
+
+  return NextResponse.json(result, {
+    status: result.success ? 200 : 401,
+  });
+}
+
+export async function POST(request: Request) {
+  const body = await request.json();
+  const result = await createOrder(request.headers.get("authorization"), body);
+
+  return NextResponse.json(result, {
+    status: result.success ? 200 : 400,
+  });
+}
+```
+
+app/api/auth/login/route.ts:
+```typescript
+import { NextResponse } from "next/server";
+
+import { loginUser } from "@/lib/server/demo-services";
+
+export async function POST(request: Request) {
+  const body = await request.json();
+  const result = await loginUser(body);
+
+  return NextResponse.json(result, {
+    status: result.success ? 200 : 401,
+  });
+}
+```
+
+A.7 Homepage Component
+
+components/home-page.tsx:
+```typescript
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  Activity,
+  ArrowRight,
+  Blocks,
+  Cloud,
+  Database,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
+
+import {
+  architecturePillars,
+  researchers,
+  researchMetrics,
+  serviceHealthSeed,
+  supervisor,
+} from "@/lib/demo-data";
+
+const serviceCards = [
+  {
+    name: "Gateway and Identity",
+    detail: "A secure edge that authenticates traffic, enforces flow control, and gives the rest of the platform a stable entry point.",
+    icon: ShieldCheck,
+  },
+  {
+    name: "Commerce Domain Services",
+    detail: "Catalog, order, payment, and notification responsibilities stay cohesive and independently understandable.",
+    icon: Blocks,
+  },
+  {
+    name: "Cloud Operations Layer",
+    detail: "Observability, containerization, and Kubernetes readiness make the demo reflect current industry practice.",
+    icon: Cloud,
+  },
+];
+
+export function HomePage() {
+  return (
+    <div>
+      <section className="relative overflow-hidden">
+        <div className="noise-overlay absolute inset-0" />
+        <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-[1.2fr_0.8fr] lg:py-28">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="space-y-8"
+          >
+            <div className="inline-flex items-center gap-3 rounded-full border border-sky-300/20 bg-sky-300/10 px-4 py-2 text-xs tracking-[0.28em] text-sky-100 uppercase">
+              <Sparkles className="h-4 w-4" />
+              Final Year Project Implementation
+            </div>
+            <div className="space-y-6">
+              <h1 className="font-display max-w-4xl text-5xl leading-none text-white md:text-7xl">
+                A cloud-native retail platform that explains its microservices architecture before users even click deeper.
+              </h1>
+              <p className="max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
+                This implementation turns the research paper into a working product story. The homepage introduces the problem, objectives, service boundaries, observability model, and academic team while the app demonstrates real catalog, checkout, and order workflows.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <Link
+                href="/catalog"
+                className="inline-flex items-center gap-2 rounded-full bg-sky-300 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-sky-200"
+              >
+                Explore the catalog
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/architecture"
+                className="rounded-full border border-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                View the architecture
+              </Link>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              {researchMetrics.map((metric, index) => (
+                <motion.div
+                  key={metric.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.12 }}
+                  className="section-card rounded-3xl p-5"
+                >
+                  <p className="text-xs tracking-[0.24em] text-slate-400 uppercase">{metric.label}</p>
+                  <p className="mt-3 text-2xl font-semibold text-white">{metric.value}</p>
+                  <p className="mt-2 text-sm leading-7 text-slate-300">{metric.detail}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="section-card rounded-[2rem] p-6"
+          >
+            <div className="rounded-[1.6rem] border border-white/10 bg-slate-950/60 p-6">
+              <div className="grid gap-4">
+                {serviceHealthSeed.map((service, index) => (
+                  <motion.div
+                    key={service.name}
+                    initial={{ opacity: 0, x: 18 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 + index * 0.08 }}
+                    className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold text-white">{service.name}</p>
+                        <p className="mt-1 text-xs text-slate-400">{service.summary}</p>
+                      </div>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          service.status === "healthy"
+                            ? "bg-emerald-400/15 text-emerald-200"
+                            : "bg-amber-300/15 text-amber-200"
+                        }`}
+                      >
+                        {service.status}
+                      </span>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between text-xs text-slate-400">
+                      <span>{service.replicas} replicas</span>
+                      <span>{service.latencyMs} ms latency</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="bg-[#f4efe7] text-slate-950">
+        <div className="mx-auto max-w-7xl space-y-10 px-6 py-20">
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-3xl">
+              <p className="text-xs tracking-[0.28em] text-slate-500 uppercase">Research translation</p>
+              <h2 className="font-display mt-3 text-4xl md:text-5xl">
+                  The implementation scope is driven directly by the paper&apos;s architecture.
+              </h2>
+            </div>
+            <p className="max-w-xl text-sm leading-7 text-slate-600">
+              Rather than building a generic storefront, this interface makes the academic value visible: gateway routing, service discovery logic, event-driven processing, observability, and deployment readiness.
+            </p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {serviceCards.map((card) => (
+              <div key={card.name} className="light-card rounded-[2rem] p-6">
+                <card.icon className="h-8 w-8 text-sky-700" />
+                <h3 className="mt-5 text-lg font-semibold">{card.name}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{card.detail}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+            <div className="light-card rounded-[2rem] p-6">
+              <div className="flex items-center gap-3 text-slate-500">
+                <Database className="h-5 w-5 text-sky-700" />
+                <span className="text-xs tracking-[0.28em] uppercase">Core pillars</span>
+              </div>
+              <div className="mt-6 space-y-4">
+                {architecturePillars.map((pillar) => (
+                  <div key={pillar} className="rounded-2xl border border-slate-200 px-4 py-4 text-sm text-slate-700">
+                    {pillar}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="light-card rounded-[2rem] p-6">
+              <div className="flex items-center gap-3 text-slate-500">
+                <Activity className="h-5 w-5 text-emerald-700" />
+                <span className="text-xs tracking-[0.28em] uppercase">Why this matters</span>
+              </div>
+              <div className="mt-6 grid gap-4">
+                {[
+                  "Scalability is demonstrated through isolated service responsibilities and independent health signals.",
+                  "Fault isolation is reflected in the separate payment outcome flow and notification independence.",
+                  "Observability is built into the experience through metrics cards, request trails, and service health panels.",
+                  "Academic clarity is preserved with a dedicated supervisor and researcher showcase presented as part of the product story.",
+                ].map((statement) => (
+                  <div key={statement} className="rounded-2xl bg-slate-950 px-5 py-4 text-sm leading-7 text-slate-300">
+                    {statement}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#0a1321]">
+        <div className="mx-auto max-w-7xl px-6 py-20">
+          <div className="max-w-3xl">
+            <p className="text-xs tracking-[0.28em] text-sky-200 uppercase">Supervisor and researchers</p>
+            <h2 className="font-display mt-3 text-4xl text-white md:text-5xl">
+              The academic team behind the work is part of the homepage experience.
+            </h2>
+          </div>
+
+          <div className="mt-12 grid gap-6 xl:grid-cols-4">
+            {[supervisor, ...researchers].map((member) => (
+              <div key={member.name} className="section-card rounded-[2rem] p-5">
+                <div className="relative h-72 overflow-hidden rounded-[1.5rem]">
+                  <Image src={member.imageUrl} alt={member.name} fill className="object-cover" sizes="(min-width: 1280px) 25vw, 100vw" />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-5">
+                    <p className="text-xs tracking-[0.24em] text-sky-200 uppercase">{member.role}</p>
+                    <h3 className="mt-2 text-lg font-semibold text-white">{member.name}</h3>
+                    {member.matricNumber ? (
+                      <p className="mt-1 text-sm text-slate-200">Matric no: {member.matricNumber}</p>
+                    ) : null}
+                  </div>
+                </div>
+                <p className="mt-4 text-sm leading-7 text-slate-300">{member.specialty}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+```
+
+The complete source code for all components, API routes, and supporting files is available in the project repository at /Users/kudirat/Desktop/work-stuff/Tasued/microservices/apps/web.
