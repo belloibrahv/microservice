@@ -1,0 +1,17 @@
+.git
+.trae
+node_modules
+.next
+apps/web/node_modules
+apps/web/.next
+apps/web/tsconfig.tsbuildinfo
+pnpm-debug.log
+.gitignore
+README.md
+DEPLOYMENT.md
+MICROSERVICES_ARCHITECTURE_FOR_CLOUD-BASED_APPLICATIONS(1).docx
+research_paper.txt
+supervisor.png
+docker-compose.yml
+Dockerfile
+.dockerignore

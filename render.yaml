@@ -3,4 +3,3 @@ services:
     name: microservices-retail-platform
     env: docker
     plan: free
-

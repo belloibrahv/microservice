@@ -31,12 +31,7 @@ Render will automatically detect the `render.yaml` file and use the following co
 services:
   - type: web
     name: microservices-retail-platform
-    env: node
-    buildCommand: pnpm install && pnpm build
-    startCommand: pnpm start
-    envVars:
-      - key: NODE_VERSION
-        value: 20
+    env: docker
     plan: free
 ```
 
@@ -45,14 +40,11 @@ services:
 The application uses in-memory demo data and doesn't require external environment variables for basic functionality. However, you can add the following if needed:
 
 - `NODE_ENV`: Set to `production` (Render sets this automatically)
-- `PORT`: Render sets this automatically
+- `PORT`: Render sets this automatically (defaults to 10000)
 
 ### 5. Deploy
 
-Click "Create Web Service" to start the deployment process. Render will:
-1. Install dependencies using pnpm
-2. Build the Next.js application
-3. Start the production server
+Click "Create Web Service" to start the deployment process. Render will build the Docker image using the Dockerfile at the repository root and start the container.
 
 ### 6. Access Your Application
 
@@ -63,11 +55,8 @@ Once deployment is complete, Render will provide a URL like:
 
 If you prefer manual configuration without `render.yaml`:
 
-1. **Build Command**: `pnpm install && pnpm build`
-2. **Start Command**: `pnpm start`
-3. **Environment**: Node
-4. **Node Version**: 20
-5. **Branch**: `main` or `master`
+1. **Environment**: Docker
+2. **Branch**: `main` or `master`
 
 ## Troubleshooting
 
