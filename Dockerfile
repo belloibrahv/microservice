@@ -1,8 +1,8 @@
 # Stage 1: Base image
 FROM node:22-alpine AS base
 
-# Install pnpm
-RUN npm install -g pnpm@11.17.0
+# Install pnpm (version compatible with Node 20)
+RUN npm install -g pnpm@9.15.0
 
 # Stage 2: Install dependencies
 FROM base AS deps

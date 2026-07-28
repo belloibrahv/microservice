@@ -2,4 +2,4 @@ services:
   - type: web
     name: microservices-retail-platform
     env: docker
-    plan: free
+    plan: starter
